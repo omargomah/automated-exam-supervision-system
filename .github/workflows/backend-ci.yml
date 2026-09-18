@@ -1,0 +1,33 @@
+name: Backend Microservices CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/backend/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "src/backend/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore Dependencies
+        run: dotnet restore src/backend/
+
+      - name: Build Solution
+        run: dotnet build src/backend/ --no-restore --configuration Release
+
+      - name: Run Unit Tests
+        run: dotnet test src/backend/ --no-build --configuration Release
