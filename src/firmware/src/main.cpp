@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "config.h"
+#include "wifi_manager.h"
 
 void setup() {
     Serial.begin(115200);
@@ -10,6 +11,8 @@ void setup() {
     Serial.println("  Status: Initializing...        ");
     Serial.println("=================================");
 
+    initWiFi(WIFI_SSID, WIFI_PASS);
+    
     #if defined(BOARD_HAS_PSRAM)
     if (psramInit()) {
         Serial.printf("PSRAM initialized successfully. Free PSRAM: %d bytes\n", ESP.getFreePsram());
@@ -23,5 +26,6 @@ void setup() {
 }
 
 void loop() {
+    handleWiFiReconnect(WIFI_SSID, WIFI_PASS);
     delay(1000);
 }
