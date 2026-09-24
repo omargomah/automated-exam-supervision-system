@@ -1,0 +1,26 @@
+name: Firmware Build Test
+
+on:
+  pull_request:
+    paths:
+      - 'src/firmware/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Run PlatformIO Build
+        run: |
+          cd src/firmware
+          pio run
