@@ -1,7 +1,7 @@
 #include "wifi_manager.h"
 
 static unsigned long lastReconnectAttempt = 0;
-const unsigned long RECONNECT_INTERVAL = 5000; // Retry every 5 seconds non-blocking
+const unsigned long RECONNECT_INTERVAL = 5000; // Check every 5s if dropped
 
 void initWiFi(const char* ssid, const char* password) {
     WiFi.mode(WIFI_STA);
@@ -20,23 +20,19 @@ void initWiFi(const char* ssid, const char* password) {
         Serial.print("[Wi-Fi] IP Address: ");
         Serial.println(WiFi.localIP());
     } else {
-        Serial.println("\n[Wi-Fi] Initial connection timeout. Auto-reconnect active in background.");
+        Serial.println("\n[Wi-Fi] Initial connection timeout. Auto-reconnect active.");
     }
 }
 
+// Automatic background reconnection if signal drops
 void handleWiFiReconnect(const char* ssid, const char* password) {
-    unsigned long currentMillis = millis();
-
     if (WiFi.status() != WL_CONNECTED) {
+        unsigned long currentMillis = millis();
         if (currentMillis - lastReconnectAttempt >= RECONNECT_INTERVAL) {
             lastReconnectAttempt = currentMillis;
-            Serial.println("[Wi-Fi] Connection lost! Attempting background reconnect...");
+            Serial.println("[Wi-Fi] Signal lost! Attempting reconnect...");
             WiFi.disconnect();
             WiFi.begin(ssid, password);
         }
     }
-}
-
-bool isWiFiConnected() {
-    return WiFi.status() == WL_CONNECTED;
 }
