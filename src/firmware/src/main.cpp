@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "config.h"
 #include "wifi_manager.h"
+#include "audio_telemetry.h"
 
 void setup() {
     Serial.begin(115200);
@@ -12,20 +13,18 @@ void setup() {
     Serial.println("=================================");
 
     initWiFi(WIFI_SSID, WIFI_PASS);
-    
-    #if defined(BOARD_HAS_PSRAM)
-    if (psramInit()) {
-        Serial.printf("PSRAM initialized successfully. Free PSRAM: %d bytes\n", ESP.getFreePsram());
-    } else {
-        Serial.println("PSRAM initialization failed!");
-    }
-    #endif
-
-    Serial.printf("Free Heap: %d bytes\n", ESP.getFreeHeap());
-    Serial.println("Hardware Node Ready.");
+    initAudioSensor(AUDIO_PIN);
 }
 
 void loop() {
     handleWiFiReconnect(WIFI_SSID, WIFI_PASS);
-    delay(1000);
+    
+    // Read audio peak voltage
+    float audioVoltage = readAudioPeakVoltage(AUDIO_PIN, AUDIO_SAMPLE_WINDOW_MS);
+    
+    if (isAcousticAnomalyDetected(audioVoltage, AUDIO_ANOMALY_THRESHOLD_V)) {
+        Serial.printf("[WARNING] Acoustic Anomaly Detected! Sound Voltage: %.2f V\n", audioVoltage);
+    }
+
+    delay(200);
 }
