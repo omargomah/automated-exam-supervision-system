@@ -3,7 +3,7 @@ name: Firmware Build Test
 on:
   pull_request:
     paths:
-      - 'src/firmware/**'
+      - "src/firmware/ESP32_Telemetry/**"
 
 jobs:
   build:
@@ -15,12 +15,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install PlatformIO
         run: pip install platformio
 
       - name: Run PlatformIO Build
         run: |
-          cd src/firmware
+          cd src/firmware/ESP32_Telemetry
           pio run
