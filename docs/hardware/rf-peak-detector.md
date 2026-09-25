@@ -21,7 +21,7 @@ An ultra-low-cost, passive Radio Frequency (RF) peak detector and voltage double
 ## Circuit Schematic & Theory
 
 ### Schematic Diagram
-![Proteus Schematic](docs/hardware/schematics/rf-peak-detector.png)
+![Proteus Schematic](./schematics/rf-peak-detector.png)
 
 ### Theoretical Model
 The circuit converts incoming high-frequency AC signals caught by a $1/4\lambda$ wire antenna into a smooth DC output using a two-stage voltage multiplication topology:
