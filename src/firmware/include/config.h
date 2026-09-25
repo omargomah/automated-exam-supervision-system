@@ -8,6 +8,10 @@
 #define WIFI_SSID "EXAM_HALL_WIFI"
 #define WIFI_PASS "ExamSecurePass2026"
 
+// Node Identification & Ingestion Gateway URL
+#define ROOM_ID "ROOM-101"
+#define API_INGEST_ENDPOINT "https://api.yourdomain.com/api/v1/telemetry/ingest"
+
 // Hardware Pin Definitions (Using ADC1 pins to avoid Wi-Fi conflicts)
 #define AUDIO_PIN 35
 #define RF_PIN 34
