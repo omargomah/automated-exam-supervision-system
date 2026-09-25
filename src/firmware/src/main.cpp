@@ -31,18 +31,6 @@ void loop() {
     float rfVoltage = readRFPeakVoltage(RF_PIN);
     int nearbyBLECount = scanBLEDevicesInProximity(BLE_SCAN_DURATION_S, BLE_RSSI_PROXIMITY_THRESHOLD);
 
-    // Telemetry Diagnostics
-    Serial.printf("[TELEMETRY] Audio: %.2fV | RF: %.2fV | Nearby BLE: %d\n", 
-                  audioVoltage, rfVoltage, nearbyBLEDevices);
-
-    if (rfVoltage > RF_SPIKE_THRESHOLD_V) {
-        Serial.printf("[WARNING] RF Transmission Spike Detected! Voltage: %.2f V\n", rfVoltage);
-    }
-    
-    if (isAcousticAnomalyDetected(audioVoltage, AUDIO_ANOMALY_THRESHOLD_V)) {
-        Serial.printf("[WARNING] Acoustic Anomaly Detected! Sound Voltage: %.2f V\n", audioVoltage);
-    }
-
     // 3. Assemble Telemetry Struct
     TelemetryData telemetry;
     telemetry.roomId = ROOM_ID;
