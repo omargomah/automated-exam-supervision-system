@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "esp_camera.h"
 #include <WiFi.h>
-
+#include <HTTPClient.h>
 // ===========================
 // Select camera model in board_config.h
 // ===========================
@@ -13,8 +13,40 @@
 const char *ssid = "**********";
 const char *password = "**********";
 
+const char* backendUrl = "http://192.168.1.100:5000/api/cameras/register";
+
 void startCameraServer();
 void setupLedFlash();
+
+
+void registerWithBackend() {
+  // Check if WiFi is actually connected before trying to send
+  if(WiFi.status() == WL_CONNECTED) {
+    String macAddress = WiFi.macAddress();
+    String localIP = WiFi.localIP().toString();
+    
+    HTTPClient http;
+    http.begin(backendUrl); 
+    http.addHeader("Content-Type", "application/json");
+
+    // Create a simple JSON payload
+    String jsonPayload = "{\"macAddress\":\"" + macAddress + "\", \"ipAddress\":\"" + localIP + "\"}";
+    
+    int httpResponseCode = http.POST(jsonPayload);
+    
+    if(httpResponseCode > 0) {
+      Serial.print("Registered with backend. Response code: ");
+      Serial.println(httpResponseCode);
+    } else {
+      Serial.print("Error registering to backend: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi not connected. Cannot register with backend.");
+  }
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -90,7 +122,7 @@ void setup() {
   }
   // drop down frame size for higher initial frame rate
   if (config.pixel_format == PIXFORMAT_JPEG) {
-    s->set_framesize(s, FRAMESIZE_QVGA);
+    s->set_framesize(s, FRAMESIZE_VGA);
   }
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
@@ -117,7 +149,10 @@ void setup() {
   }
   Serial.println("");
   Serial.println("WiFi connected");
-
+  
+  // call backend to register ip of camera
+  registerWithBackend();
+  
   startCameraServer();
 
   Serial.print("Camera Ready! Use 'http://");
