@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "esp_camera.h"
 #include <WiFi.h>
-
+#include <HTTPClient.h>
 // ===========================
 // Select camera model in board_config.h
 // ===========================
@@ -13,8 +13,70 @@
 const char *ssid = "**********";
 const char *password = "**********";
 
+const char* backendUrl = "http://192.168.1.100:5000/api/cameras/register";
+
 void startCameraServer();
 void setupLedFlash();
+
+// this function to register the camera when connect to wifi on backend
+void registerWithBackend() {
+  // Check if WiFi is actually connected before trying to send
+  if(WiFi.status() == WL_CONNECTED) {
+    String macAddress = WiFi.macAddress();
+    String localIP = WiFi.localIP().toString();
+    
+    HTTPClient http;
+    http.begin(backendUrl); 
+    http.addHeader("Content-Type", "application/json");
+
+    // Create a simple JSON payload
+    String jsonPayload = "{\"macAddress\":\"" + macAddress + "\", \"ipAddress\":\"" + localIP + "\"}";
+    
+    int httpResponseCode = http.POST(jsonPayload);
+    
+    if(httpResponseCode > 0) {
+      Serial.print("Registered with backend. Response code: ");
+      Serial.println(httpResponseCode);
+    } else {
+      Serial.print("Error registering to backend: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi not connected. Cannot register with backend.");
+  }
+}
+
+
+//this function to connect the esp32-cam to wifi when setup and when disconnect during work to don't reset the esp32-cam to connect to wifi
+bool connectToWiFi() {
+  Serial.print("Connecting to WiFi");
+  WiFi.disconnect(); // Clear any stalled connections
+  WiFi.begin(ssid, password);
+  
+  int retries = 0;
+  // Try to connect for 10 seconds (20 * 500ms)
+  while (WiFi.status() != WL_CONNECTED && retries < 20) {
+    delay(500);
+    Serial.print(".");
+    retries++;
+  }
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi connected successfully!");
+    Serial.print("Current IP: ");
+    Serial.println(WiFi.localIP());
+    
+    // Automatically register the new IP with your .NET backend
+    registerWithBackend();
+    return true;
+  } else {
+    Serial.println("\nWiFi connection failed.");
+    return false;
+  }
+}
+
+
 
 void setup() {
   Serial.begin(115200);
@@ -90,7 +152,7 @@ void setup() {
   }
   // drop down frame size for higher initial frame rate
   if (config.pixel_format == PIXFORMAT_JPEG) {
-    s->set_framesize(s, FRAMESIZE_QVGA);
+    s->set_framesize(s, FRAMESIZE_VGA);
   }
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
@@ -106,18 +168,13 @@ void setup() {
 #if defined(LED_GPIO_NUM)
   setupLedFlash();
 #endif
-
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
-
-  Serial.print("WiFi connecting");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  
+  // Keep trying until it successfully connects and registers
+  while (!connectToWiFi()) {
+    Serial.println("Retrying WiFi in 2 seconds...");
+    delay(2000); 
   }
-  Serial.println("");
-  Serial.println("WiFi connected");
-
+  
   startCameraServer();
 
   Serial.print("Camera Ready! Use 'http://");
@@ -126,6 +183,10 @@ void setup() {
 }
 
 void loop() {
-  // Do nothing. Everything is done in another task by the web server
+ // If the connection drops during the exam
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi connection lost! Attempting to reconnect...");
+    connectToWiFi();
+  }
   delay(10000);
 }
