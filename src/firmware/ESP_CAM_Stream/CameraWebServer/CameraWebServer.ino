@@ -18,7 +18,7 @@ const char* backendUrl = "http://192.168.1.100:5000/api/cameras/register";
 void startCameraServer();
 void setupLedFlash();
 
-
+// this function to register the camera when connect to wifi on backend
 void registerWithBackend() {
   // Check if WiFi is actually connected before trying to send
   if(WiFi.status() == WL_CONNECTED) {
@@ -46,6 +46,36 @@ void registerWithBackend() {
     Serial.println("WiFi not connected. Cannot register with backend.");
   }
 }
+
+
+//this function to connect the esp32-cam to wifi when setup and when disconnect during work to don't reset the esp32-cam to connect to wifi
+bool connectToWiFi() {
+  Serial.print("Connecting to WiFi");
+  WiFi.disconnect(); // Clear any stalled connections
+  WiFi.begin(ssid, password);
+  
+  int retries = 0;
+  // Try to connect for 10 seconds (20 * 500ms)
+  while (WiFi.status() != WL_CONNECTED && retries < 20) {
+    delay(500);
+    Serial.print(".");
+    retries++;
+  }
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi connected successfully!");
+    Serial.print("Current IP: ");
+    Serial.println(WiFi.localIP());
+    
+    // Automatically register the new IP with your .NET backend
+    registerWithBackend();
+    return true;
+  } else {
+    Serial.println("\nWiFi connection failed.");
+    return false;
+  }
+}
+
 
 
 void setup() {
@@ -138,20 +168,12 @@ void setup() {
 #if defined(LED_GPIO_NUM)
   setupLedFlash();
 #endif
-
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
-
-  Serial.print("WiFi connecting");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected");
   
-  // call backend to register ip of camera
-  registerWithBackend();
+  // Keep trying until it successfully connects and registers
+  while (!connectToWiFi()) {
+    Serial.println("Retrying WiFi in 2 seconds...");
+    delay(2000); 
+  }
   
   startCameraServer();
 
@@ -161,6 +183,10 @@ void setup() {
 }
 
 void loop() {
-  // Do nothing. Everything is done in another task by the web server
+ // If the connection drops during the exam
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi connection lost! Attempting to reconnect...");
+    connectToWiFi();
+  }
   delay(10000);
 }
