@@ -60,7 +60,7 @@ namespace Domain.Entities
                 {
                     return Result.Failure<CameraDevice>(ipResult.Error!);
                 }
-                currentIpAddress = ipResult.Value.Value;
+                currentIpAddress = ipResult.Value!.Value;
             }
             else
             {
@@ -70,7 +70,7 @@ namespace Domain.Entities
             return Result.Success(new CameraDevice(
                 id ?? Guid.NewGuid(),
                 classroomId,
-                macResult.Value.Value,
+                macResult.Value!.Value,
                 currentIpAddress,
                 status,
                 status == CameraStatus.Online ? DateTime.UtcNow : null));
@@ -96,7 +96,7 @@ namespace Domain.Entities
                 {
                     return Result.Failure(ipResult.Error!);
                 }
-                CurrentIpAddress = ipResult.Value.Value;
+                CurrentIpAddress = ipResult.Value!.Value;
             }
             else
             {
@@ -116,7 +116,7 @@ namespace Domain.Entities
                 var ipResult = IpAddress.Create(ipAddress);
                 if (ipResult.IsSuccess)
                 {
-                    CurrentIpAddress = ipResult.Value.Value;
+                    CurrentIpAddress = ipResult.Value!.Value;
                 }
             }
         }

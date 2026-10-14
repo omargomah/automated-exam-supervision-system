@@ -73,7 +73,7 @@ namespace Domain.Entities
                 return Result.Failure<Student>(imageResult.Error!);
             }
 
-            return Create(fName, lName, imageResult.Value, id);
+            return Create(fName, lName, imageResult.Value!, id);
         }
 
         public Result UpdateProfile(string fName, string lName, ProfileImage imageUrl)
@@ -126,7 +126,7 @@ namespace Domain.Entities
                 return Result.Failure(imageResult.Error!);
             }
 
-            return UpdateProfile(fName, lName, imageResult.Value);
+            return UpdateProfile(fName, lName, imageResult.Value!);
         }
     }
 }

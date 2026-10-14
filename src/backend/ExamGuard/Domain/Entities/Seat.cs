@@ -26,7 +26,7 @@ namespace Domain.Entities
         public Classroom Classroom { get; private set; } = null!;
         public IReadOnlyCollection<ExamSeatAssignment> ExamSeatAssignments => _examSeatAssignments.AsReadOnly();
 
-        public Coordinates Coordinates => Coordinates.Create(X_Coordinate, Y_Coordinate).Value;
+        public Coordinates Coordinates => Coordinates.Create(X_Coordinate, Y_Coordinate).Value!;
 
         public static Result<Seat> Create(Guid classroomId, int xCoordinate, int yCoordinate, int label, Guid? id = null)
         {

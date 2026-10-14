@@ -48,7 +48,7 @@ namespace Domain.Entities
 
         public IReadOnlyCollection<Evidence> Evidences => _evidences.AsReadOnly();
 
-        public ConfidenceScore ConfidenceScoreVo => ValueObjects.ConfidenceScore.Create(ConfidenceScore).Value;
+        public ConfidenceScore ConfidenceScoreVo => ValueObjects.ConfidenceScore.Create(ConfidenceScore).Value!;
 
         public static Result<AlertEvent> Create(
             Guid cameraDeviceId,
@@ -85,7 +85,7 @@ namespace Domain.Entities
                 studentId,
                 examSessionId,
                 alertType,
-                scoreResult.Value.Value,
+                scoreResult.Value!.Value,
                 DateTime.UtcNow,
                 AlertStatus.Pending));
         }

@@ -90,7 +90,7 @@ namespace Domain.Entities
                 id ?? Guid.NewGuid(),
                 fName,
                 lName,
-                emailResult.Value.Value,
+                emailResult.Value!.Value,
                 passwordHash,
                 isActive));
         }
@@ -139,7 +139,7 @@ namespace Domain.Entities
                 return Result.Failure(emailResult.Error!);
             }
 
-            Email = emailResult.Value.Value;
+            Email = emailResult.Value!.Value;
             return Result.Success();
         }
 
