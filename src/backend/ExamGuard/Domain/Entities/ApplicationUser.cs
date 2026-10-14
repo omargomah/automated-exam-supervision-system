@@ -16,7 +16,7 @@ namespace Domain.Entities
             Guid id,
             string fName,
             string lName,
-            string email,
+            Email email,
             string password,
             bool isActive) : base(id)
         {
@@ -29,7 +29,7 @@ namespace Domain.Entities
 
         public string FName { get; private set; } = string.Empty;
         public string LName { get; private set; } = string.Empty;
-        public string Email { get; private set; } = string.Empty;
+        public Email Email { get; private set; } = null!;
         public string Password { get; private set; } = string.Empty;
         public bool IsActive { get; private set; }
 
@@ -42,7 +42,7 @@ namespace Domain.Entities
         public static Result<ApplicationUser> Create(
             string fName,
             string lName,
-            string email,
+            Email email,
             string passwordHash,
             bool isActive = true,
             Guid? id = null)
@@ -75,10 +75,9 @@ namespace Domain.Entities
                     $"Last name cannot exceed {Constants.ApplicationUser.LastNameMaxLength} characters."));
             }
 
-            var emailResult = ValueObjects.Email.Create(email);
-            if (emailResult.IsFail)
+            if (email is null)
             {
-                return Result.Failure<ApplicationUser>(emailResult.Error!);
+                return Result.Failure<ApplicationUser>(Error.Create("ApplicationUser.EmailNull", "Email cannot be null."));
             }
 
             if (string.IsNullOrWhiteSpace(passwordHash))
@@ -90,9 +89,26 @@ namespace Domain.Entities
                 id ?? Guid.NewGuid(),
                 fName,
                 lName,
-                emailResult.Value!.Value,
+                email,
                 passwordHash,
                 isActive));
+        }
+
+        public static Result<ApplicationUser> Create(
+            string fName,
+            string lName,
+            string email,
+            string passwordHash,
+            bool isActive = true,
+            Guid? id = null)
+        {
+            var emailResult = ValueObjects.Email.Create(email);
+            if (emailResult.IsFail)
+            {
+                return Result.Failure<ApplicationUser>(emailResult.Error!);
+            }
+
+            return Create(fName, lName, emailResult.Value!, passwordHash, isActive, id);
         }
 
         public Result UpdateProfile(string fName, string lName)
@@ -131,6 +147,17 @@ namespace Domain.Entities
             return Result.Success();
         }
 
+        public Result UpdateEmail(Email email)
+        {
+            if (email is null)
+            {
+                return Result.Failure(Error.Create("ApplicationUser.EmailNull", "Email cannot be null."));
+            }
+
+            Email = email;
+            return Result.Success();
+        }
+
         public Result UpdateEmail(string email)
         {
             var emailResult = ValueObjects.Email.Create(email);
@@ -139,8 +166,7 @@ namespace Domain.Entities
                 return Result.Failure(emailResult.Error!);
             }
 
-            Email = emailResult.Value!.Value;
-            return Result.Success();
+            return UpdateEmail(emailResult.Value!);
         }
 
         public Result UpdatePassword(string passwordHash)
