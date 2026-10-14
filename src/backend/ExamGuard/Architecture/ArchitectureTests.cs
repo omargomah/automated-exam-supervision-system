@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using API;
+using FluentAssertions;
 using NetArchTest.Rules;
 using System.Reflection;
 
@@ -40,11 +41,11 @@ namespace Architecture
 
         }
         [Fact]
-        public void Infrastructure_Should_HasNoDependencyOn_API_Domain()
+        public void Infrastructure_Should_HasNoDependencyOn_API()
         {
             //arrange
             Assembly assembly = typeof(Infrastructure.AssemblyReference).Assembly;
-            string[] otherProjectsNameSpaces = [DomainNamespace, APINamespace];
+            string[] otherProjectsNameSpaces = [APINamespace];
 
             //act
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjectsNameSpaces).GetResult();
@@ -53,19 +54,52 @@ namespace Architecture
 
         }
         [Fact]
-        public void API_Should_HasNoDependencyOn_Domain()
+        public void API_ProgramClass_ShouldHasDependencyOnApplicationInfrastructureAndNotInDomain()
         {
             //arrange
             Assembly assembly = typeof(API.AssemblyReference).Assembly;
-            string[] otherProjectsNameSpaces = [DomainNamespace];
-
+            string[] otherProjectsNameSpacesDependOn = [InfrastructureNamespace, ApplicationNamespace];
+            string[] otherProjectsNameSpacesNotDependOn = [DomainNamespace];
+              
             //act
-            var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjectsNameSpaces).GetResult();
+            var testResultOfDependency = Types.InAssembly(assembly)
+            .That()
+            .HaveName(nameof(Program)) 
+            .Should()
+            .HaveDependencyOnAll(otherProjectsNameSpacesDependOn)
+            .GetResult();
+
+            var testResultOfNotDependency = Types.InAssembly(assembly)
+            .That()
+            .HaveName(nameof(Program)) 
+            .ShouldNot()
+            .HaveDependencyOnAll(otherProjectsNameSpacesNotDependOn)
+            .GetResult();
+
             //assert
-            result.IsSuccessful.Should().BeTrue();
+            testResultOfDependency.IsSuccessful.Should().BeTrue();
+            testResultOfNotDependency.IsSuccessful.Should().BeTrue();
 
         }
-        
+
+        [Fact]
+        public void Controllers_Should_AlwaysDependOn_ApplicationAndDomain()
+        {
+            // Arrange
+            var assembly = typeof(API.AssemblyReference).Assembly;
+            string[] requiredNamespaces = [ApplicationNamespace, DomainNamespace];
+
+            // Act - Filter only types in the Controllers namespace
+            var result = Types.InAssembly(assembly)
+                .That()
+                .ResideInNamespaceContaining("Controllers")
+                .Should()
+                .HaveDependencyOnAll(requiredNamespaces)
+                .GetResult();
+
+            // Assert
+            result.IsSuccessful.Should().BeTrue();
+        }
 
     }
 

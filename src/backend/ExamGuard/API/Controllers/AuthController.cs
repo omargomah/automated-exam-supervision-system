@@ -8,13 +8,11 @@ using Application.Auth.ResetPasswordCommand;
 using Application.Auth.SendConfirmEmailCommand;
 using Application.Auth.SendResetPasswordEmailCommand;
 using Asp.Versioning;
-using Domain.Entities;
 using Domain.Shared;
 using Infrastructure.Options;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace API.Controllers
