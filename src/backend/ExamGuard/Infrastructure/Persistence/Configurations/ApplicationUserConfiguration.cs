@@ -29,14 +29,6 @@ namespace Infrastructure.Persistence.Configurations
                     value => Email.Create(value).Value!)
                 .HasMaxLength(Constants.ApplicationUser.EmailMaxLength);
 
-            builder.Property(u => u.Password)
-                .IsRequired()
-                .HasMaxLength(500);
-
-            builder.Property(u => u.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true);
-
             builder.HasIndex(u => u.Email)
                 .IsUnique();
 
