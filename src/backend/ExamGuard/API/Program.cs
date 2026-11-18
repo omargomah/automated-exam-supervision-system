@@ -1,10 +1,12 @@
 
 using API.ExceptionsHandlers;
+using API.Mappings;
 using API.SwaggerConfigurations;
 using Application;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Infrastructure;
+using Mapster;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Serilog;
@@ -45,7 +47,10 @@ namespace API
                 // Add services to the container.
                 builder.Services.AddControllers();
                 builder.Services.AddEndpointsApiExplorer();
-            
+
+                // add Mapster configurations for the API layer
+                builder.Services.AddApiMappings();         // Request -> Command configs (API)
+                builder.Services.AddMapster();             // once: registers IMapper using GlobalSettings
 
                 #region Swagger
                 builder.Services.AddApiVersioning(options =>
