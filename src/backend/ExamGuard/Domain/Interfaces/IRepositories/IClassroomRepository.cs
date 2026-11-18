@@ -8,5 +8,6 @@ namespace Domain.Interfaces.IRepositories
         Task<Classroom?> GetWithSeatsAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Classroom?> GetWithCamerasAsync(Guid id, CancellationToken cancellationToken = default);
         Task<bool> IsNameUniqueAsync(string name, Guid? excludeClassroomId = null, CancellationToken cancellationToken = default);
+        Task<bool> IsNameUniqueAsync(string name, CancellationToken cancellationToken = default);
     }
 }

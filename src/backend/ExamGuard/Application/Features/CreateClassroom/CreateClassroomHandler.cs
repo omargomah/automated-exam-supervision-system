@@ -1,8 +1,10 @@
 ﻿using Application.Auth.ConfirmEmailCommand;
-using Application.Features.CreateClassroom;
 using Application.IServices;
+using Domain.Interfaces;
+using Domain.Interfaces.IRepositories;
 using Domain.Shared;
 using MediatR;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,17 +13,27 @@ namespace Application.Features.CreateClassroom
 {
     public class CreateClassroomHandler : IRequestHandler<CreateClassroomCommand, Result<Guid>>
     {
-        private readonly IClassRoomService _classRoomService;
+        private readonly IClassroomRepository _classroomRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateClassroomHandler(IClassRoomService classRoomService)
+        public CreateClassroomHandler(IClassroomRepository classroomRepository, IUnitOfWork unitOfWork)
         {
-            _classRoomService = classRoomService;
+            _classroomRepository = classroomRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<Guid>> Handle(CreateClassroomCommand command, CancellationToken cancellationToken)
         {
 
-            return await _classRoomService.CreateClassRoomAsync(command);
+            var classroom = Classroom.Create(command.name, command.capacity);
+            if (!classroom.IsSuccess)
+                return Result.Failure<Guid>(classroom.Error!);
+
+            var newClassroom = classroom.Value!;
+            await _classroomRepository.AddAsync(newClassroom, cancellationToken);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result<Guid>.Success(newClassroom.Id);
         }
     }
 }
