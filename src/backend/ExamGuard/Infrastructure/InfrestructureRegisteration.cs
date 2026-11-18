@@ -97,7 +97,6 @@ namespace Infrastructure
             services.AddScoped<IEvidenceRepository, EvidenceRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
-            services.AddScoped<IClassRoomService, ClassRoomService>();
             #endregion
 
             return services;
