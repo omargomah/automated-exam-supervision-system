@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Roles = $"Supervisor")]
         public async Task<IActionResult> CreateExamSession([FromBody] CreateExamSessionCommandDto commandDto)
         {   // Get the supervisorId from the current user's claims and add it to the command before sending it to the mediator
-            Guid supervisorId =  ClaimsPrincipal.Current!.GetUserId();
+            Guid supervisorId =  User.GetUserId();
             Result result = await _mediator.Send(commandDto.BuildAdapter()
                                            .AddParameters("SupervisorId", supervisorId)
                                            .AdaptToType<CreateExamSessionCommand>());
