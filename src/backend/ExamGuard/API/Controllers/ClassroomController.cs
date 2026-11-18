@@ -1,9 +1,6 @@
 ﻿using Domain.Shared;
-using Infrastructure.Options;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Application.Features.CreateClassroom;
 
 namespace API.Controllers
@@ -19,20 +16,16 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [ProducesResponseType(typeof(Result), 201)]
         [ProducesResponseType(typeof(Result), 400)]
-        public async Task<IActionResult> CreateClassroom([FromBody] CreateClassroomCommand command)
+        public async Task<IActionResult> CreateClassroom([FromBody] CreateClassroomCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            else
-            {
-                return BadRequest(result.Error);
-            }
+
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.IsSuccess
+                ? StatusCode(StatusCodes.Status201Created, result)
+                : BadRequest(result);
         }
     }
 }
