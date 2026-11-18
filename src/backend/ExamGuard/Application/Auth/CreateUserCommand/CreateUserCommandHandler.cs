@@ -44,16 +44,28 @@ namespace Application.Auth.CreateUserCommand
                 if (await _unitOfWork.SaveChangesAsync() > 0)
                 {
                     // this code will replace by mapper in the future don't forget to add mapper in the project
-                    return Result.Success(new CreateUserCommandResponse(applicationUserResult.Value!.Email,applicationUserResult.Value!.FName, applicationUserResult.Value!.LName, request.UserRole));
+                    return Result.Success(new CreateUserCommandResponse(applicationUserResult.Value!.Email, applicationUserResult.Value!.FName, applicationUserResult.Value!.LName, request.UserRole));
+                }
+                else
+                {
+                    // if application user creation fails, delete the created identity user
+                    _logger.LogError("Failed to save changes.");
+                    Result deleteResult = await _identityService.DeleteAppUserAsync(createAppUserResult.Value!.ToString(), cancellationToken);
+                    if (deleteResult.IsFail)
+                        _logger.LogCritical(deleteResult.Error!.Message);
+                    return Result.Failure<CreateUserCommandResponse>(Error.Create("CreateUserCommandHandler", "Failed to save changes."));
                 }
             }
+            else
+            {
+                // if application user creation fails, delete the created identity user
+                _logger.LogError(applicationUserResult.Error!.Message);
+                Result deleteResult = await _identityService.DeleteAppUserAsync(createAppUserResult.Value!.ToString(), cancellationToken);
+                if(deleteResult.IsFail)
+                    _logger.LogCritical(deleteResult.Error!.Message);
+                return Result.Failure<CreateUserCommandResponse>(deleteResult.Error!);
+            }
 
-            // if application user creation fails, delete the created identity user
-            _logger.LogError(applicationUserResult.Error!.Message);
-            Result deleteResult = await _identityService.DeleteAppUserAsync(createAppUserResult.Value!.ToString(), cancellationToken);
-            if(deleteResult.IsFail)
-                _logger.LogCritical(deleteResult.Error!.Message);
-            return Result.Failure<CreateUserCommandResponse>(deleteResult.Error!);
         }
     }
 }

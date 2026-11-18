@@ -23,7 +23,11 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<IReadOnlyList<ExamSession>> GetByStatusAsync(ExamSessionStatus status, CancellationToken cancellationToken = default) =>
             await _set.Where(es => es.Status == status).ToListAsync(cancellationToken);
-
+        public async Task<bool> IsClassRoomAvailableForSession(DateTime start, DateTime end, Guid classroomId) =>
+            !await _set.AnyAsync(es => es.ClassroomId == classroomId &&
+                                        ((start >= es.StartTime && start < es.EndTime) ||
+                                         (end > es.StartTime && end <= es.EndTime) ||
+                                         (start <= es.StartTime && end >= es.EndTime)));
         public async Task<IReadOnlyList<ExamSession>> GetUpcomingSessionsAsync(DateTime fromUtc, CancellationToken cancellationToken = default) =>
             await _set.Where(es => es.StartTime >= fromUtc && es.Status == ExamSessionStatus.Scheduled)
                       .OrderBy(es => es.StartTime)
