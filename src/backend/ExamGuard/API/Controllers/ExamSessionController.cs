@@ -1,5 +1,6 @@
 ﻿using API.Requests;
 using Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession;
+using Application.ExamSessionCommandsAndQueries.Queries.GetAllExamSessions;
 using Asp.Versioning;
 using Domain.Shared;
 using Mapster;
@@ -21,10 +22,11 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
+
         [HttpPost]
         [ProducesResponseType(typeof(Result), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = $"Supervisor")]
+        [Authorize(Roles = "Supervisor")]
         public async Task<IActionResult> CreateExamSession([FromBody] CreateExamSessionCommandDto commandDto)
         {   // Get the supervisorId from the current user's claims and add it to the command before sending it to the mediator
             Guid supervisorId =  User.GetUserId();
@@ -35,6 +37,14 @@ namespace API.Controllers
                 return Created();
 
             return BadRequest(result);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Supervisor")]
+        [ProducesResponseType(typeof(PaginateList<GetAllExamSessionsResponse>), StatusCodes.Status201Created)]
+        public async Task<ActionResult<PaginateList<GetAllExamSessionsResponse>>> GetAllExamSessions([FromQuery]GetAllExamSessionsQuery query)
+        {
+            return Ok(await _mediator.Send(query));                        
         }
     }
 }

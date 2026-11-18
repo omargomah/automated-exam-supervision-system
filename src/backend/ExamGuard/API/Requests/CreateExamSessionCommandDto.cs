@@ -1,4 +1,4 @@
 ﻿namespace API.Requests
 {
-    public sealed record CreateExamSessionCommandDto(string title, DateTime startTime, DateTime endTime, Guid ClassRoomId);
+    public sealed record CreateExamSessionCommandDto(string Title, DateTime StartTime, DateTime EndTime, Guid ClassRoomId);
 }
