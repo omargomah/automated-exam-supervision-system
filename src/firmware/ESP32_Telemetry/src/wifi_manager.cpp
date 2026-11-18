@@ -80,7 +80,7 @@ int scanAndGetSuspiciousAPCount() {
             long channel = (long)WiFi.channel(i);
 
             // Filter for strong signals in close proximity
-            if (rssi > -75) {
+            if (rssi > WIFI_RSSI_PROXIMITY_THRESHOLD) {
                 // Ignore empty or hidden SSIDs
                 if (currentSSID.length() == 0) {
                     Serial.println("[INFO] Hidden/Blank AP detected (Ignored)");

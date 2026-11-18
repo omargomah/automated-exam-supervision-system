@@ -1,4 +1,7 @@
 #include "rf_ble_sniffer.h"
+#include <set>
+#include <string.h>
+
 
 static BLEScan* pBLEScan = nullptr;
 
@@ -23,8 +26,6 @@ void initBLEScanner() {
     Serial.println("[BLE] Scanner initialized.");
 }
 
-#include <set>
-#include <String.h>
 
 int scanBLEDevicesInProximity(int scanDurationSeconds, int rssiThreshold) {
     if (!pBLEScan) return 0;
