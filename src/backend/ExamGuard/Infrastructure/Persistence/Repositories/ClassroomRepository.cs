@@ -24,9 +24,5 @@ namespace Infrastructure.Persistence.Repositories
             !await _set.AnyAsync(
                 c => c.Name == name && (!excludeClassroomId.HasValue || c.Id != excludeClassroomId.Value),
                 cancellationToken);
-        public async Task<bool> IsNameUniqueAsync(string name, CancellationToken cancellationToken = default)
-        {
-            return !await _dbContext.Classrooms.AnyAsync(c => c.Name == name, cancellationToken);
-        }
     }
 }
