@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Application.Features.CreateClassroom;
+using Application.Features.AddSeatsToClassroom;
 
 namespace API.Controllers
 {
@@ -26,6 +27,29 @@ namespace API.Controllers
             return result.IsSuccess
                 ? Created()
                 : BadRequest(result);
+        }
+
+        [HttpPost("{classroomId:guid}/seats")]
+        [ProducesResponseType(typeof(Result<List<Guid>>), 201)]
+        [ProducesResponseType(typeof(Result), 400)]
+        [ProducesResponseType(typeof(Result), 404)]
+        public async Task<IActionResult> AddSeatsToClassroom(
+            [FromRoute] Guid classroomId,
+            [FromBody] List<SeatDto> seats,
+            CancellationToken cancellationToken)
+        {
+            var command = new AddSeatsToClassroomCommand(classroomId, seats);
+            var result = await _mediator.Send(command, cancellationToken);
+
+            if (result.IsFail)
+            {
+                if (result.Error!.Code == "Classroom.NotFound")
+                    return NotFound(result);
+
+                return BadRequest(result);
+            }
+
+            return StatusCode(StatusCodes.Status201Created, result);
         }
     }
 }
