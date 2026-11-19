@@ -76,7 +76,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(Result<CreateUserCommandResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "Supervisor,ExamAdmin")]
-        public async Task<ActionResult<Result<CreateUserCommandResponse>>> CreateUser([FromBody] CreateProctorDto command, CancellationToken cancellationToken)
+        public async Task<ActionResult<Result<CreateUserCommandResponse>>> CreateUser([FromBody] CreateUserDto command, CancellationToken cancellationToken)
         {
             
 

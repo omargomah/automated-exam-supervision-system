@@ -14,7 +14,7 @@ namespace API.Mappings
                 .Map(dest => dest.Title, src => src.Title.Trim())
                 .Map(dest => dest.SupervisorId, "SupervisorId");
 
-            TypeAdapterConfig<CreateProctorDto, CreateUserCommand>
+            TypeAdapterConfig<CreateUserDto, CreateUserCommand>
                 .NewConfig()
                 .Map(dest => dest.Email, src => src.Email.Trim())
                 .Map(dest => dest.FName, src => src.FName.Trim())
