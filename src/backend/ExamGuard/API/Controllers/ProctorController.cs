@@ -29,7 +29,7 @@ namespace API.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /api/v1.0/Auth/create-proctor
+        ///     POST /api/v1.0/proctor/create-proctor
         ///     {
         ///        "email": "scdcdscsd@example.com",
         ///        "fname": "Omar",
