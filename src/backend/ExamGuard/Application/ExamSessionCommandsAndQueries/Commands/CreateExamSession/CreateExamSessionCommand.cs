@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession
 {
-    public sealed record CreateExamSessionCommand(string title, DateTime startTime, DateTime endTime , Guid ClassRoomId,Guid SupervisorId) : IRequest<Result>;
+    public sealed record CreateExamSessionCommand(string Title, DateTime StartTime, DateTime EndTime , Guid ClassRoomId,Guid SupervisorId) : IRequest<Result>;
 }

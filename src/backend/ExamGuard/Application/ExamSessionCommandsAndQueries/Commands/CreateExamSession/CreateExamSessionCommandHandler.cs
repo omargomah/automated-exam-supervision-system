@@ -23,11 +23,12 @@ namespace Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession
         {
             // create a new exam session using the provided details
             var result = ExamSession.Create(
-                request.title,
-                request.startTime,
-                request.endTime,
+                request.Title,
+                request.StartTime,
+                request.EndTime,
                 request.SupervisorId,
                 request.ClassRoomId);
+            
             if (result.IsFail)
                 return Result.Failure(result.Error!);
 

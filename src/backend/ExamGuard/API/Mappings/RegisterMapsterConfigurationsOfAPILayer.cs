@@ -10,7 +10,7 @@ namespace API.Mappings
         {
             TypeAdapterConfig<CreateExamSessionCommandDto, CreateExamSessionCommand>
                 .NewConfig()
-                .Map(dest => dest.title, src => src.title.Trim())
+                .Map(dest => dest.Title, src => src.Title.Trim())
                 .Map(dest => dest.SupervisorId, "SupervisorId");
         }
     }

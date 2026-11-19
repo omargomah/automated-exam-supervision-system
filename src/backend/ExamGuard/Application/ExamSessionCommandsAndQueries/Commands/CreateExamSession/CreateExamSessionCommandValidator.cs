@@ -8,18 +8,18 @@ namespace Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession
     {
         public CreateExamSessionCommandValidator(IClassroomRepository classroomRepository , IExamSessionRepository examSessionRepository)
         {
-            RuleFor(x => x.title)
+            RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required.")
                 .MaximumLength(Constants.ExamSession.TitleMaxLength).WithMessage($"Title must not exceed {Constants.ExamSession.TitleMaxLength} characters.");
 
-            RuleFor(x => x.startTime)
+            RuleFor(x => x.StartTime)
                 .NotEmpty().WithMessage("Start time is required.")
                 .GreaterThan(DateTime.UtcNow).WithMessage("Start time must be in the future.")
-                .LessThan(x => x.endTime).WithMessage("Start time must be before end time.");
+                .LessThan(x => x.EndTime).WithMessage("Start time must be before end time.");
 
-            RuleFor(x => x.endTime)
+            RuleFor(x => x.EndTime)
                 .NotEmpty().WithMessage("End time is required.")
-                .GreaterThan(x => x.startTime).WithMessage("End time must be after start time.")
+                .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time.")
                 .GreaterThan(DateTime.UtcNow).WithMessage("End time must be in the future.");
 
             RuleFor(x => x.ClassRoomId)
@@ -34,8 +34,8 @@ namespace Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession
             RuleFor(x => x)
                 .MustAsync(async (x, cancellationToken) =>
                     await examSessionRepository.IsClassRoomAvailableForSession(
-                        x.startTime,
-                        x.endTime,
+                        x.StartTime,
+                        x.EndTime,
                         x.ClassRoomId)).WithMessage("Selected classroom is not available for the specified time slot.");
 
         }
