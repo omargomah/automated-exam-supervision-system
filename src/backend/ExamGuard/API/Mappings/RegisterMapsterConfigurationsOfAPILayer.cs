@@ -1,4 +1,5 @@
 ﻿using API.Requests;
+using Application.Auth.CreateUserCommand;
 using Application.ExamSessionCommandsAndQueries.Commands.CreateExamSession;
 using Mapster;
 
@@ -12,6 +13,15 @@ namespace API.Mappings
                 .NewConfig()
                 .Map(dest => dest.Title, src => src.Title.Trim())
                 .Map(dest => dest.SupervisorId, "SupervisorId");
+
+            TypeAdapterConfig<CreateUserDto, CreateUserCommand>
+                .NewConfig()
+                .Map(dest => dest.Email, src => src.Email.Trim())
+                .Map(dest => dest.FName, src => src.FName.Trim())
+                .Map(dest => dest.LName, src => src.LName.Trim())
+                .Map(dest => dest.UserRole,"UserRole")
+                .Map(dest => dest.Password, src => src.Password)
+                .Map(dest => dest.ConfirmPassword, src => src.ConfirmPassword);
         }
     }
 }

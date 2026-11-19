@@ -11,7 +11,7 @@ namespace Application.Features.CreateClassroom
             RuleFor(c => c.name)
                 .NotEmpty()
                 .MaximumLength(Constants.Classroom.NameMaxLength)
-                .MustAsync(classroomRepository.IsNameUniqueAsync)
+                .MustAsync(async (name,ct) => await classroomRepository.IsNameUniqueAsync(name,cancellationToken: ct))
                 .WithMessage("Classroom with the same name already exists.");
 
             RuleFor(c => c.capacity)

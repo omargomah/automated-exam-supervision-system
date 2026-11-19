@@ -7,11 +7,11 @@ namespace API.Controllers
 {
     [Route("api/Classrooms")]
     [ApiController]
-    public class ClassRommController : ControllerBase
+    public class ClassRoomController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public ClassRommController(IMediator mediator)
+        public ClassRoomController(IMediator mediator)
         {
             _mediator = mediator;
         }

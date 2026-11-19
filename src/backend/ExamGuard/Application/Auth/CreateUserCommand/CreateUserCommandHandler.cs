@@ -5,6 +5,7 @@ using Domain.Interfaces;
 using Domain.Interfaces.IRepositories;
 using Domain.Shared;
 using Domain.ValueObjects;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -43,8 +44,7 @@ namespace Application.Auth.CreateUserCommand
                 await _applicationUserRepository.AddAsync(applicationUserResult.Value!);
                 if (await _unitOfWork.SaveChangesAsync() > 0)
                 {
-                    // this code will replace by mapper in the future don't forget to add mapper in the project
-                    return Result.Success(new CreateUserCommandResponse(applicationUserResult.Value!.Email, applicationUserResult.Value!.FName, applicationUserResult.Value!.LName, request.UserRole));
+                    return Result.Success(applicationUserResult.Value!.BuildAdapter().AddParameters("UserRole",request.UserRole).AdaptToType<CreateUserCommandResponse>());
                 }
                 else
                 {
