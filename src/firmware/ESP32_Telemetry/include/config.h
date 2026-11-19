@@ -5,8 +5,8 @@
 #define SERIAL_BAUD_RATE 115200
 
 // Wi-Fi Credentials (Replace with exam hall AP details for field deployment)
-#define WIFI_SSID "EXAM_HALL_WIFI"
-#define WIFI_PASS "ExamSecurePass2026"
+#define WIFI_SSID "Panda"    // my wifi is panda, please dont hack me
+#define WIFI_PASS "jca16590" // :(
 
 // Node Identification & Ingestion Gateway URL
 #define ROOM_ID "ROOM-101"
@@ -23,6 +23,7 @@
 // RF & BLE Sniffer Settings
 #define BLE_SCAN_DURATION_S 1
 #define BLE_RSSI_PROXIMITY_THRESHOLD -80 // dBm cutoff for desk/room radius
+#define WIFI_RSSI_PROXIMITY_THRESHOLD -80
 #define RF_SPIKE_THRESHOLD_V 2.0         // Volts cutoff for suspicious RF energy
 
 #endif // CONFIG_H

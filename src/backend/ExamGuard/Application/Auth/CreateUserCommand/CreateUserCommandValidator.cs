@@ -10,17 +10,22 @@ namespace Application.Auth.CreateUserCommand
         {
             RuleFor(x => x.FName)
                 .NotEmpty().WithMessage("FName is required.")
-                .MaximumLength(Constants.ApplicationUser.FirstNameMaxLength).WithMessage($"First name cannot exceed {Constants.ApplicationUser.FirstNameMaxLength} characters.");
+                .MaximumLength(Constants.ApplicationUser.FirstNameMaxLength)
+                .WithMessage($"First name cannot exceed {Constants.ApplicationUser.FirstNameMaxLength} characters.");
 
             RuleFor(x => x.LName)
                 .NotEmpty().WithMessage("LName is required.")
-                .MaximumLength(Constants.ApplicationUser.LastNameMaxLength).WithMessage($"Last name cannot exceed {Constants.ApplicationUser.LastNameMaxLength} characters.");
+                .MaximumLength(Constants.ApplicationUser.LastNameMaxLength)
+                .WithMessage($"Last name cannot exceed {Constants.ApplicationUser.LastNameMaxLength} characters.");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.").MustAsync(identityService.CheckEmailIsUniqueAsync);
+                .EmailAddress()
+                .WithMessage("Invalid email format.")
+                .MustAsync(identityService.CheckEmailIsUniqueAsync);
             
-            RuleFor(x => x.UserRole).IsInEnum().WithMessage($"the User Role Should be {UserRole.Proctor} or {UserRole.Supervisor}")
+            RuleFor(x => x.UserRole).IsInEnum()
+                .WithMessage($"the User Role Should be {UserRole.Proctor} or {UserRole.Supervisor}")
                 .NotEqual(UserRole.ExamAdmin)
                 .WithMessage("You can't create User with this role");
             

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
+
 namespace API.Controllers
 {
     [ApiController]
@@ -140,6 +141,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(Result), 400)]
         public async Task<ActionResult<Result<CreateUserCommandResponse>>> CreateUser([FromBody] CreateUserCommand command, CancellationToken cancellationToken)
         {
+            
             var result = await _mediator.Send(command, cancellationToken);
             
             if (result.IsSuccess)

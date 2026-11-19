@@ -49,36 +49,7 @@ namespace Domain.Entities
             Guid classroomId,
             Guid? id = null)
         {
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                return Result.Failure<ExamSession>(Error.Create("ExamSession.TitleEmpty", "Exam session title cannot be empty."));
-            }
-
             title = title.Trim();
-
-            if (title.Length > Constants.ExamSession.TitleMaxLength)
-            {
-                return Result.Failure<ExamSession>(Error.Create(
-                    "ExamSession.TitleTooLong",
-                    $"Exam session title cannot exceed {Constants.ExamSession.TitleMaxLength} characters."));
-            }
-
-            if (endTime <= startTime)
-            {
-                return Result.Failure<ExamSession>(Error.Create(
-                    "ExamSession.InvalidSchedule",
-                    "End time must be later than start time."));
-            }
-
-            if (createdById == Guid.Empty)
-            {
-                return Result.Failure<ExamSession>(Error.Create("ExamSession.EmptyCreatedById", "CreatedBy user ID cannot be empty."));
-            }
-
-            if (classroomId == Guid.Empty)
-            {
-                return Result.Failure<ExamSession>(Error.Create("ExamSession.EmptyClassroomId", "Classroom ID cannot be empty."));
-            }
 
             return Result.Success(new ExamSession(
                 id ?? Guid.NewGuid(),

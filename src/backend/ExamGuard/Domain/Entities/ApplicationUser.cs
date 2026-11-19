@@ -38,29 +38,6 @@ namespace Domain.Entities
             Email email,
             Guid? id = null)
         {
-            if (string.IsNullOrWhiteSpace(fName))
-                return Result.Failure<ApplicationUser>(Error.Create("ApplicationUser.FirstNameEmpty", "First name cannot be empty."));
-
-            fName = fName.Trim();
-
-            if (fName.Length > Constants.ApplicationUser.FirstNameMaxLength)
-                return Result.Failure<ApplicationUser>(Error.Create(
-                    "ApplicationUser.FirstNameTooLong",
-                    $"First name cannot exceed {Constants.ApplicationUser.FirstNameMaxLength} characters."));
-
-            if (string.IsNullOrWhiteSpace(lName))
-                return Result.Failure<ApplicationUser>(Error.Create("ApplicationUser.LastNameEmpty", "Last name cannot be empty."));
-
-            lName = lName.Trim();
-
-            if (lName.Length > Constants.ApplicationUser.LastNameMaxLength)
-                return Result.Failure<ApplicationUser>(Error.Create(
-                    "ApplicationUser.LastNameTooLong",
-                    $"Last name cannot exceed {Constants.ApplicationUser.LastNameMaxLength} characters."));
-
-            if (email is null)
-                return Result.Failure<ApplicationUser>(Error.Create("ApplicationUser.EmailNull", "Email cannot be null."));
-
             return Result.Success(new ApplicationUser(
                 id ?? Guid.NewGuid(),
                 fName,

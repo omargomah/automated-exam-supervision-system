@@ -1,9 +1,5 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Persistence.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Infrastructure.Persistence.Repositories
 {
     public class UnitOfWork : IUnitOfWork
@@ -14,9 +10,9 @@ namespace Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
-        public Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return _dbContext.SaveChangesAsync();
+            return _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

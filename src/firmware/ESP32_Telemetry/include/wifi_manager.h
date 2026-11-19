@@ -7,6 +7,7 @@
 // Function Declarations
 void initWiFi(const char* ssid, const char* password);
 void handleWiFiReconnect(const char* ssid, const char* password);
+int scanAndGetSuspiciousAPCount();
 bool isWiFiConnected();
 
 #endif // WIFI_MANAGER_H

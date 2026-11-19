@@ -9,5 +9,6 @@ namespace Domain.Interfaces.IRepositories
         Task<IReadOnlyList<ExamSession>> GetByClassroomIdAsync(Guid classroomId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<ExamSession>> GetByStatusAsync(ExamSessionStatus status, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<ExamSession>> GetUpcomingSessionsAsync(DateTime fromUtc, CancellationToken cancellationToken = default);
+        Task<bool> IsClassRoomAvailableForSession(DateTime start, DateTime end, Guid classroomId);
     }
 }

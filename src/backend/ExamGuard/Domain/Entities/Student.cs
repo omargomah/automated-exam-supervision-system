@@ -68,10 +68,9 @@ namespace Domain.Entities
         public static Result<Student> Create(string fName, string lName, string imageUrl, string imagePublicId, Guid? id = null)
         {
             var imageResult = ProfileImage.Create(imageUrl, imagePublicId);
+           
             if (imageResult.IsFail)
-            {
                 return Result.Failure<Student>(imageResult.Error!);
-            }
 
             return Create(fName, lName, imageResult.Value!, id);
         }

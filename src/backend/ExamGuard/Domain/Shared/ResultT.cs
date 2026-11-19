@@ -9,6 +9,7 @@ namespace Domain.Shared
         {
             _value = value;
         }
+        //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] //WhenWritingNull returns error 500 so i changed it to WhenWritingDefault
         public TValue? Value => IsSuccess ? _value : default /*throw new InvalidOperationException("The value of a failure result cannot be accessed.")*/;
         
