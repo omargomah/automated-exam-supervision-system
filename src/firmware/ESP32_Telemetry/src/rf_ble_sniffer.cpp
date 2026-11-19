@@ -1,4 +1,7 @@
 #include "rf_ble_sniffer.h"
+#include <set>
+#include <string.h>
+
 
 static BLEScan* pBLEScan = nullptr;
 
@@ -23,22 +26,26 @@ void initBLEScanner() {
     Serial.println("[BLE] Scanner initialized.");
 }
 
+
 int scanBLEDevicesInProximity(int scanDurationSeconds, int rssiThreshold) {
     if (!pBLEScan) return 0;
 
-    BLEScanResults foundDevices = pBLEScan->start(scanDurationSeconds, false);
-    int localDeviceCount = 0;
+    BLEScanResults* foundDevices = pBLEScan->start(scanDurationSeconds, false);
+    std::set<std::string> uniqueDevices;
 
-    for (int i = 0; i < foundDevices.getCount(); i++) {
-        BLEAdvertisedDevice device = foundDevices.getDevice(i);
-        int rssi = device.getRSSI();
+    if (foundDevices != nullptr) {
+        for (int i = 0; i < foundDevices->getCount(); i++) {
+            BLEAdvertisedDevice device = foundDevices->getDevice(i);
+            int rssi = device.getRSSI();
 
-        // Count devices whose RSSI indicates close physical proximity
-        if (rssi > rssiThreshold) {
-            localDeviceCount++;
+            // Check RSSI threshold (ensure threshold is negative, e.g., -80)
+            if (rssi > rssiThreshold) {
+                std::string macAddress = device.getAddress().toString().c_str();
+                uniqueDevices.insert(macAddress); // std::set automatically drops duplicates
+            }
         }
     }
 
-    pBLEScan->clearResults(); // Clear buffer to prevent heap memory exhaustion
-    return localDeviceCount;
+    pBLEScan->clearResults(); 
+    return uniqueDevices.size(); // Returns exact number of unique physical devices
 }

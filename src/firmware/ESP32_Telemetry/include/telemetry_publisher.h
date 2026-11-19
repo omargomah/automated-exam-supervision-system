@@ -11,6 +11,9 @@ struct TelemetryData {
     float rfVoltage;
     float soundPeakVoltage;
     int bleDeviceCount;
+    bool wifiConnected; // Added
+    int wifiRssi;       // Added
+    int suspiciousAPCount;  // Added
 };
 
 void initTelemetryPublisher();

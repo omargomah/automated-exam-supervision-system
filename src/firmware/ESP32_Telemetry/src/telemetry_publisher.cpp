@@ -1,3 +1,5 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
 #include "telemetry_publisher.h"
 
 void initTelemetryPublisher() {
@@ -16,6 +18,9 @@ bool publishTelemetry(const char* apiEndpoint, const TelemetryData& data) {
     doc["rfVoltage"] = data.rfVoltage;
     doc["soundPeakVoltage"] = data.soundPeakVoltage;
     doc["bleDeviceCount"] = data.bleDeviceCount;
+    doc["wifiConnected"] = data.wifiConnected;
+    doc["wifiRssi"] = data.wifiRssi;
+    doc["suspiciousAPCount"] = data.suspiciousAPCount;
 
     String jsonPayload;
     serializeJson(doc, jsonPayload);
