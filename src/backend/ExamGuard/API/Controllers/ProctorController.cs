@@ -92,7 +92,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Supervisor,ExamAdmin")]
-        [ProducesResponseType(typeof(PaginateList<GetAllProctorResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(PaginateList<GetAllProctorResponse>), StatusCodes.Status200OK)]
         public async Task<ActionResult<PaginateList<GetAllProctorResponse>>> GetAllProctors([FromQuery] GetAllProctorQuery query, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(query, cancellationToken));
