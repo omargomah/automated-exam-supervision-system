@@ -16,6 +16,7 @@
   <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Pagination\" />
+    <Folder Include="ProctorCommandsAndQueries\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
