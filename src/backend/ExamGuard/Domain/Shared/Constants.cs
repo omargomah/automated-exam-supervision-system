@@ -6,6 +6,8 @@ namespace Domain.Shared
         {
             public const int NameMaxLength = 50;
             public const int MinCapacity = 1;
+
+            public const int MaxCapacity = 20;
         }
 
         public static class Seat

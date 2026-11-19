@@ -47,7 +47,14 @@ namespace Domain.Entities
                     $"Classroom capacity must be at least {Constants.Classroom.MinCapacity}."));
             }
 
-            return Result.Success(new Classroom(id ?? Guid.NewGuid(), name, capacity));
+            if (capacity > Constants.Classroom.MaxCapacity)
+            {
+                return Result.Failure<Classroom>(Error.Create(
+                    "Classroom.InvalidCapacity",
+                    $"Classroom capacity cannot exceed {Constants.Classroom.MaxCapacity}."));
+            }
+
+            return Result.Success( new Classroom(id ?? Guid.NewGuid(), name, capacity));
         }
 
         public Result Update(string name, int capacity)
