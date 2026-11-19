@@ -53,7 +53,7 @@ namespace API.Controllers
         ///        "email": "organizer@example.com",
         ///        "fname": "Omar",
         ///        "lname": "Gomaa",
-        ///        "userrole": "Proctor",
+        ///        "userrole": "supervisor",
         ///   }
         /// }
         /// </code>
