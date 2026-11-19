@@ -92,6 +92,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<Guid?>("ExamSessionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -106,6 +109,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("ExamSessionId");
 
                     b.ToTable("ApplicationUsers");
                 });
@@ -642,6 +647,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("Domain.Entities.ExamSession", "ExamSession")
+                        .WithMany("Proctors")
+                        .HasForeignKey("ExamSessionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ExamSession");
+                });
+
             modelBuilder.Entity("Domain.Entities.AuditLog", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
@@ -855,6 +870,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("AlertEvents");
 
                     b.Navigation("ExamSeatAssignments");
+
+                    b.Navigation("Proctors");
                 });
 
             modelBuilder.Entity("Domain.Entities.Seat", b =>
