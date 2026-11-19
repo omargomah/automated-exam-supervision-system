@@ -1,5 +1,7 @@
 ﻿using API.Requests;
 using Application.Auth.CreateUserCommand;
+using Application.ExamSessionCommandsAndQueries.Queries.GetAllExamSessions;
+using Application.ProctorCommandsAndQueries.Queries.GetAllProctors;
 using Asp.Versioning;
 using Domain.Enums;
 using Domain.Shared;
@@ -87,6 +89,15 @@ namespace API.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Supervisor,ExamAdmin")]
+        [ProducesResponseType(typeof(PaginateList<GetAllProctorResponse>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginateList<GetAllProctorResponse>>> GetAllProctors([FromQuery] GetAllProctorQuery query, CancellationToken cancellationToken)
+        {
+            return Ok(await _mediator.Send(query, cancellationToken));
+        }
+
 
 
     }
