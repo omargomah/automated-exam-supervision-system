@@ -24,7 +24,7 @@ namespace API.Controllers
 
             var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
-                ? Created(result)
+                ? Created()
                 : BadRequest(result);
         }
     }
