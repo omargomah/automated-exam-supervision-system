@@ -29,7 +29,7 @@ namespace API.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /api/v1.0/Auth/create-supervisor
+        ///     POST /api/v1.0/supervisor/create-supervisor
         ///     {
         ///        "email": "scdcdscsd@example.com",
         ///        "fname": "Omar",
