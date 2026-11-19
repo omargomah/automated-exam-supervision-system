@@ -14,13 +14,13 @@ namespace Infrastructure.Persistence.Repositories
         {                                      
             _dbContext = dbContext;
         }
-        public async Task<List<Guid>> GetIdsOfAllProctorsAsync( CancellationToken cancellationToken = default)
+        public async Task<IQueryable<Guid>> GetIdsOfAllProctorsAsync( CancellationToken cancellationToken = default)
         {
-            return await (from userRole in _dbContext.UserRoles
+            return (from userRole in _dbContext.UserRoles
                                 join role in _dbContext.Roles on userRole.RoleId equals role.Id
                                 where role.NormalizedName ==  UserRole.Proctor.ToString().ToUpper()
                                 select userRole.UserId
-                            ).ToListAsync(cancellationToken);            
+                            );            
         }
 
         public async Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
