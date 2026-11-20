@@ -54,7 +54,9 @@ namespace Domain.Shared
         public static class Evidence
         {
             public const int FrameTypeMaxLength = 50;
-            public const int MediaPathMaxLength = 2000;
+            public const int MediaUrlMaxLength = 2000;
+            public const int MediaPublicIdMaxLength = 250;
+            public const int MaxVideoDurationSeconds = 5;
         }
 
         public static class ApplicationUser

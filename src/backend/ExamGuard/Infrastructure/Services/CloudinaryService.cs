@@ -65,24 +65,67 @@ namespace Infrastructure.Services
             return createProfileImageResult;
         }
 
+        public async Task<Result<MediaFile>> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default)
+        {
+            if (file == null || file.Length == 0)
+                return Result.Failure<MediaFile>(Domain.Shared.Error.Create("Invalid file", "File cannot be null or empty"));
+
+            await using var stream = file.OpenReadStream();
+
+            var publicId = $"videos/{Guid.NewGuid()}";
+
+            var uploadParams = new VideoUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                PublicId = publicId,
+                Overwrite = true,
+                Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+            };
+
+            var uploadResult = await _cloudinary.UploadLargeAsync(uploadParams, cancellationToken: cancellationToken);
+
+            if (uploadResult.Error != null)
+                return Result.Failure<MediaFile>(Domain.Shared.Error.Create("CloudinaryUploadFailed", $"Cloudinary video upload failed: {uploadResult.Error.Message}"));
+
+            var createVideoResult = MediaFile.Create(uploadResult.SecureUrl.ToString(), uploadResult.PublicId)!;
+
+            if (createVideoResult.IsFail)
+            {
+                _logger.LogError("Failed to create video value object after uploading. Deleting uploaded video {PublicId}", uploadResult.PublicId);
+                bool isDeleteSuccess = await DeleteVideoAsync(uploadResult.PublicId, cancellationToken);
+                if (!isDeleteSuccess)
+                    _logger.LogWarning("Failed to delete uploaded video {PublicId} after value object creation failed", uploadResult.PublicId);
+            }
+
+            return createVideoResult;
+        }
         public async Task<bool> DeleteImageAsync(string publicId, CancellationToken cancellationToken = default)
+        {
+            return await DeleteAsync(ResourceType.Image, publicId, cancellationToken);
+        }
+        public async Task<bool> DeleteVideoAsync(string publicId, CancellationToken cancellationToken = default)
+        {
+            return await DeleteAsync(ResourceType.Video, publicId, cancellationToken);
+        }
+        private async Task<bool> DeleteAsync(ResourceType resourceType, string publicId, CancellationToken cancellationToken = default)
         {
             // Validate the publicId is not null or empty
             if (string.IsNullOrWhiteSpace(publicId))
                 return false;
 
             // Create deletion parameters for the image and call the Cloudinary API to delete it
-            var deleteParams = new DeletionParams(publicId) 
+            var deleteParams = new DeletionParams(publicId)
             {
-                ResourceType = ResourceType.Image 
+                ResourceType = resourceType
             };
             var result = await _cloudinary.DestroyAsync(deleteParams);
 
             // Check if the deletion was successful and log a warning if it failed
             bool isDeleted = result.Result == "ok";
             if (!isDeleted)
-                _logger.LogWarning("Failed to delete image from Cloudinary. PublicId: {PublicId}", publicId);
+                _logger.LogWarning("Failed to delete {ResourceType} from Cloudinary. PublicId: {PublicId}", resourceType, publicId);
             return isDeleted;
+
         }
     }
 }

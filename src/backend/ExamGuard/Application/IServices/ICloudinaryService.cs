@@ -7,5 +7,7 @@ namespace Application.IServices
     {
         Task<Result<ProfileImage>> UploadImageAsync(IFormFile file, CancellationToken cancellationToken = default);
         Task<bool> DeleteImageAsync(string publicId, CancellationToken cancellationToken = default);
+        Task<Result<MediaFile>> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default);
+        Task<bool> DeleteVideoAsync(string publicId, CancellationToken cancellationToken = default);
     }
 }
