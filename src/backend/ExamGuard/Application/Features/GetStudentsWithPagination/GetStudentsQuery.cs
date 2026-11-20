@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Domain.Shared;
+using MediatR;
 
 namespace Application.Features.GetStudentsWithPagination
 {
@@ -13,5 +14,5 @@ namespace Application.Features.GetStudentsWithPagination
         int PageNumber = 1,
         int PageSize = 10,
         string? Search = null
-    ) : IRequest<PaginatedStudentsResponse>;
+    ) : IRequest<PaginateList<PaginatedStudentsResponse>>;
 }

@@ -1,4 +1,6 @@
 ﻿using Domain.Interfaces.IRepositories;
+using Domain.Shared;
+using Mapster;
 using MediatR;
 
 namespace Application.Features.GetStudentsWithPagination
@@ -26,8 +28,8 @@ namespace Application.Features.GetStudentsWithPagination
 
             return await _studentRepository.ExecutePaginationAsync(
                 query.OrderBy(s => s.FName).ThenBy(s => s.LName).ProjectToType<PaginatedStudentsResponse>(),
-                request.Page,
-                request.PageSize
+                request.PageNumber,
+                request.PageSize,
                 cancellationToken);
 
         }
