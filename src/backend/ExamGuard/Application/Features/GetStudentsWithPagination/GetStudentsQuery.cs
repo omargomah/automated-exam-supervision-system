@@ -2,19 +2,11 @@
 
 namespace Application.Features.GetStudentsWithPagination
 {
-    public sealed record StudentItemDto(
+    public sealed record PaginatedStudentsResponse(
         Guid Id,
         string FullName,
         string? StudentCode,
         string? Email
-    );
-
-    public sealed record PaginatedStudentsResponse(
-        IReadOnlyList<StudentItemDto> Items,
-        int PageNumber,
-        int PageSize,
-        int TotalCount,
-        int TotalPages
     );
 
     public record GetStudentsQuery(
@@ -22,17 +14,4 @@ namespace Application.Features.GetStudentsWithPagination
         int PageSize = 10,
         string? Search = null
     ) : IRequest<PaginatedStudentsResponse>;
-
-    //// For backwards compatibility and Controller binding
-    //public sealed record GetStudentWithPaginationCommand(
-    //    int PageNumber = 1,
-    //    int PageSize = 10,
-    //    string? Search = null
-    //) : GetStudentsQuery(PageNumber, PageSize, Search);
-
-    //public sealed record GetStudentQuery(
-    //    int PageNumber = 1,
-    //    int PageSize = 10,
-    //    string? Search = null
-    //) : GetStudentsQuery(PageNumber, PageSize, Search);
 }
