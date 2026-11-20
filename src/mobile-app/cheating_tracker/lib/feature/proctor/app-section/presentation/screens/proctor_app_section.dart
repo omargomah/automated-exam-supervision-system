@@ -18,14 +18,17 @@ class _ProctorAppSectionState extends State<ProctorAppSection> {
     ProctorRoomsScreen(),
     ProctorProfileScreen(),
   ];
+  final List<String> _titles = ['Dashboard', 'Alerts', 'Rooms', 'Profile'];
   int _currIdx = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text(_titles[_currIdx])),
       body: _screens[_currIdx],
 
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: _currIdx,
         onTap: (index) => setState(() {
