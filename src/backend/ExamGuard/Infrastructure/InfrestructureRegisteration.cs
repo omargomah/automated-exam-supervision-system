@@ -56,6 +56,13 @@ namespace Infrastructure
             services.Configure<EmailOptions>(configuration.GetSection(nameof(EmailOptions)));
 
             #endregion
+
+            #region Cloudinary Service Registeration
+
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.Configure<CloudinaryOptions>(configuration.GetSection(nameof(CloudinaryOptions)));
+
+            #endregion
             
             #region Auth Registeration
             services.AddScoped<IIdentityService,IdentityService>();
