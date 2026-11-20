@@ -1,4 +1,5 @@
 using Application.Features.GetStudentsWithPagination;
+using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedStudentsResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Result),StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PaginatedStudentsResponse>> GetStudents(
             [FromQuery] GetStudentsQuery query,
             CancellationToken cancellationToken) =>
