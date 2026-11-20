@@ -26,6 +26,10 @@ namespace Domain.Entities
         public string LName { get; private set; } = string.Empty;
         public Email Email { get; private set; } = null!;
 
+        //Add ExamSessionId (FK) + ExamSession navigation property
+        public Guid? ExamSessionId { get; private set; }
+        public ExamSession? ExamSession { get; private set; }
+
         public string FullName => $"{FName} {LName}".Trim();
 
         public IReadOnlyCollection<ExamSession> CreatedExamSessions => _createdExamSessions.AsReadOnly();
@@ -85,6 +89,7 @@ namespace Domain.Entities
 
             return Result.Success();
         }
+
 
     }
 }

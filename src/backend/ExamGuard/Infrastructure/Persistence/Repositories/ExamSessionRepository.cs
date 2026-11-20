@@ -15,6 +15,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<ExamSession?> GetWithDetailsAsync(Guid id, CancellationToken cancellationToken = default) =>
             await _set.Include(es => es.Classroom)
                       .Include(es => es.CreatedBy)
+                       .Include(es => es.Proctors)
                       .Include(es => es.ExamSeatAssignments)
                       .SingleOrDefaultAsync(es => es.Id == id, cancellationToken);
 

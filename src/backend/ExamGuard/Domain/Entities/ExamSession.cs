@@ -8,7 +8,7 @@ namespace Domain.Entities
     {
         private readonly List<ExamSeatAssignment> _examSeatAssignments = new();
         private readonly List<AlertEvent> _alertEvents = new();
-
+        private readonly List<ApplicationUser> _proctors = new();
         private ExamSession() : base(Guid.NewGuid()) { }
 
         private ExamSession(
@@ -40,7 +40,7 @@ namespace Domain.Entities
 
         public IReadOnlyCollection<ExamSeatAssignment> ExamSeatAssignments => _examSeatAssignments.AsReadOnly();
         public IReadOnlyCollection<AlertEvent> AlertEvents => _alertEvents.AsReadOnly();
-
+        public IReadOnlyCollection<ApplicationUser> Proctors => _proctors.AsReadOnly();
         public static Result<ExamSession> Create(
             string title,
             DateTime startTime,

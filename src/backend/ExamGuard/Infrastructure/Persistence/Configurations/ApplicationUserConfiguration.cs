@@ -46,6 +46,12 @@ namespace Infrastructure.Persistence.Configurations
                 .WithOne(al => al.ApplicationUser)
                 .HasForeignKey(al => al.ApplicationUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            //Configure the relationship between ApplicationUser and ExamSession
+            builder.HasOne(p => p.ExamSession)
+                .WithMany(s => s.Proctors)
+                .HasForeignKey(p => p.ExamSessionId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
