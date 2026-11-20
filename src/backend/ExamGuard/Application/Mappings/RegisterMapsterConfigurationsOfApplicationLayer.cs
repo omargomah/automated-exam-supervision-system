@@ -1,5 +1,5 @@
 ﻿using Application.Auth.CreateUserCommand;
-using Application.Features.GetStudentsWithPagination;
+using Application.ProctorCommandsAndQueries.Queries.GetAllProctors;
 using Domain.Entities;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +17,11 @@ namespace Application.Mappings
             .Map(dest => dest.LName, src => src.LName)
             .Map(dest => dest.UserRole, "UserRole");
 
-            TypeAdapterConfig<Student, PaginatedStudentsResponse>
-            .NewConfig()
-            .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.FullName, src => src.FullName)
-            .Map(dest => dest.ImageUrl, src => src.ImageUrl);
-
+            TypeAdapterConfig<ApplicationUser, GetAllProctorResponse>
+                .NewConfig()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.Email, src => src.Email)
+                .Map(dest => dest.Name, src => $"{src.FName} {src.LName}");
         }
     }
 }

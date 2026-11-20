@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.IRepositories;
 using Domain.ValueObjects;
 using Infrastructure.Persistence.Data;
@@ -8,8 +9,18 @@ namespace Infrastructure.Persistence.Repositories
 {
     public class ApplicationUserRepository : Repository<ApplicationUser>, IApplicationUserRepository
     {
+        private readonly ApplicationDbContext _dbContext;
         public ApplicationUserRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {                                      
+            _dbContext = dbContext;
+        }
+        public async Task<IQueryable<Guid>> GetIdsOfAllProctorsAsync( CancellationToken cancellationToken = default)
         {
+            return (from userRole in _dbContext.UserRoles
+                                join role in _dbContext.Roles on userRole.RoleId equals role.Id
+                                where role.NormalizedName ==  UserRole.Proctor.ToString().ToUpper()
+                                select userRole.UserId
+                            );            
         }
 
         public async Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
