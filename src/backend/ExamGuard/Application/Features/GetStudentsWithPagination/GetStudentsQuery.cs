@@ -1,4 +1,5 @@
 ﻿using Domain.Shared;
+using Domain.ValueObjects;
 using MediatR;
 
 namespace Application.Features.GetStudentsWithPagination
@@ -7,7 +8,8 @@ namespace Application.Features.GetStudentsWithPagination
         Guid Id,
         string FullName,
         string? StudentCode,
-        string? Email
+        string? Email,
+        ProfileImage ImageUrl
     );
 
     public record GetStudentsQuery(
