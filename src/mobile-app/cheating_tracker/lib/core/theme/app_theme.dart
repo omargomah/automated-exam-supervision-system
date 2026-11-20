@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 
 abstract class AppTheme {
   static final ThemeData lightTheme = ThemeData.light().copyWith(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primaryColor,
+      primary: AppColors.primaryColor,
+      surface: AppColors.backgroundColor,
+      error: AppColors.dangerColor,
+    ),
     scaffoldBackgroundColor: AppColors.backgroundColor,
     appBarTheme: AppBarTheme(
       centerTitle: true,
