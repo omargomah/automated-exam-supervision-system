@@ -16,14 +16,10 @@ namespace Domain.ValueObjects
         public static Result<ProfileImage> Create(string url, string publicId)
         {
             if (string.IsNullOrWhiteSpace(url))
-            {
                 return Result.Failure<ProfileImage>(Error.Create("ProfileImage.UrlEmpty", "Image URL cannot be empty."));
-            }
 
             if (string.IsNullOrWhiteSpace(publicId))
-            {
                 return Result.Failure<ProfileImage>(Error.Create("ProfileImage.PublicIdEmpty", "Image public ID cannot be empty."));
-            }
 
             url = url.Trim();
             publicId = publicId.Trim();
