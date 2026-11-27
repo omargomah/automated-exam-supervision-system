@@ -9,4 +9,5 @@ abstract class AppColors {
   static const Color dangerColor = Color(0XFFE7000B);
   static const Color bodyFontColor = Color(0xFF1E2939);
   static const Color hintFontColor = Color(0xFF99A1AF);
+  static const Color inActiveColor = Color(0xFF4A5565);
 }
