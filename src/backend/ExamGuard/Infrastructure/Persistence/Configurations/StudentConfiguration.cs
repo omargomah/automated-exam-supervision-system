@@ -39,9 +39,9 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(esa => esa.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(s => s.AlertEvents)
-                .WithOne(ae => ae.Student)
-                .HasForeignKey(ae => ae.StudentId)
+            builder.HasMany(s => s.CameraAlerts)
+                .WithOne(ca => ca.Student)
+                .HasForeignKey(ca => ca.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

@@ -1,4 +1,4 @@
-﻿using Domain.Shared;
+using Domain.Shared;
 using Domain.ValueObjects;
 using MediatR;
 
@@ -9,7 +9,7 @@ namespace Application.Features.GetStudentsWithPagination
         string FullName,
         string? StudentCode,
         string? Email,
-        ProfileImage ImageUrl
+        MediaFile ImageUrl
     );
 
     public record GetStudentsQuery(

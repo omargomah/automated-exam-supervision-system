@@ -5,33 +5,26 @@ using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class AlertEvent : Entity, IAggregateRoot
+    public abstract class AlertEvent : Entity, IAggregateRoot
     {
-        private readonly List<Evidence> _evidences = new();
+        protected AlertEvent() : base(Guid.NewGuid()) { }
 
-        private AlertEvent() : base(Guid.NewGuid()) { }
-
-        private AlertEvent(
+        protected AlertEvent(
             Guid id,
-            Guid cameraDeviceId,
-            Guid studentId,
+            Guid deviceId,
             Guid examSessionId,
-            AlertType alertType,
             decimal confidenceScore,
             DateTime createdAt,
             AlertStatus status) : base(id)
         {
-            CameraDeviceId = cameraDeviceId;
-            StudentId = studentId;
+            DeviceId = deviceId;
             ExamSessionId = examSessionId;
-            AlertType = alertType;
             ConfidenceScore = confidenceScore;
             CreatedAt = createdAt;
             Status = status;
         }
 
-        public Guid CameraDeviceId { get; private set; }
-        public Guid StudentId { get; private set; }
+        public Guid DeviceId { get; private set; }
         public Guid ExamSessionId { get; private set; }
         public Guid? ReviewedById { get; private set; }
         public decimal ConfidenceScore { get; private set; }
@@ -39,55 +32,34 @@ namespace Domain.Entities
         public AlertStatus Status { get; private set; }
         public DateTime? ReviewedAt { get; private set; }
         public string? ReviewerNote { get; private set; }
-        public AlertType AlertType { get; private set; }
 
-        public CameraDevice CameraDevice { get; private set; } = null!;
-        public Student Student { get; private set; } = null!;
         public ExamSession ExamSession { get; private set; } = null!;
         public ApplicationUser? ReviewedBy { get; private set; }
 
-        public IReadOnlyCollection<Evidence> Evidences => _evidences.AsReadOnly();
-
         public ConfidenceScore ConfidenceScoreVo => ValueObjects.ConfidenceScore.Create(ConfidenceScore).Value!;
 
-        public static Result<AlertEvent> Create(
-            Guid cameraDeviceId,
-            Guid studentId,
+        protected static Result<decimal> ValidateBaseInputs(
+            Guid deviceId,
             Guid examSessionId,
-            AlertType alertType,
-            decimal confidenceScore,
-            Guid? id = null)
+            decimal confidenceScore)
         {
-            if (cameraDeviceId == Guid.Empty)
+            if (deviceId == Guid.Empty)
             {
-                return Result.Failure<AlertEvent>(Error.Create("AlertEvent.EmptyCameraDeviceId", "Camera device ID cannot be empty."));
-            }
-
-            if (studentId == Guid.Empty)
-            {
-                return Result.Failure<AlertEvent>(Error.Create("AlertEvent.EmptyStudentId", "Student ID cannot be empty."));
+                return Result.Failure<decimal>(Error.Create("AlertEvent.EmptyDeviceId", "Device ID cannot be empty."));
             }
 
             if (examSessionId == Guid.Empty)
             {
-                return Result.Failure<AlertEvent>(Error.Create("AlertEvent.EmptyExamSessionId", "Exam session ID cannot be empty."));
+                return Result.Failure<decimal>(Error.Create("AlertEvent.EmptyExamSessionId", "Exam session ID cannot be empty."));
             }
 
             var scoreResult = ValueObjects.ConfidenceScore.Create(confidenceScore);
             if (scoreResult.IsFail)
             {
-                return Result.Failure<AlertEvent>(scoreResult.Error!);
+                return Result.Failure<decimal>(scoreResult.Error!);
             }
 
-            return Result.Success(new AlertEvent(
-                id ?? Guid.NewGuid(),
-                cameraDeviceId,
-                studentId,
-                examSessionId,
-                alertType,
-                scoreResult.Value!.Value,
-                DateTime.UtcNow,
-                AlertStatus.Pending));
+            return Result.Success(scoreResult.Value!.Value);
         }
 
         public Result Review(Guid reviewerId, AlertStatus status, string? reviewerNote = null)
@@ -123,14 +95,6 @@ namespace Domain.Entities
             ReviewerNote = reviewerNote;
 
             return Result.Success();
-        }
-
-        public void AddEvidence(Evidence evidence)
-        {
-            if (evidence is not null && !_evidences.Contains(evidence))
-            {
-                _evidences.Add(evidence);
-            }
         }
     }
 }

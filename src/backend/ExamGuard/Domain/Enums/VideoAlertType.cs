@@ -1,6 +1,6 @@
 namespace Domain.Enums
 {
-    public enum AlertType
+    public enum VideoAlertType
     {
         PhoneDetected = 1,
         LookingAway = 2,

@@ -21,14 +21,16 @@ namespace Domain.ValueObjects
 
             ipAddress = ipAddress.Trim();
 
-            if (ipAddress.Length > Constants.CameraDevice.IpAddressMaxLength)
+            if (ipAddress.Length > Constants.Device.IpAddressMaxLength)
             {
-                return Result.Failure<IpAddress>(Error.Create("IpAddress.TooLong", $"IP address cannot exceed {Constants.CameraDevice.IpAddressMaxLength} characters."));
+                return Result.Failure<IpAddress>(Error.Create("IpAddress.TooLong", $"IP address cannot exceed {Constants.Device.IpAddressMaxLength} characters."));
             }
 
-            if (!IPAddress.TryParse(ipAddress, out var parsedIp) || parsedIp.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            if (!IPAddress.TryParse(ipAddress, out var parsedIp) ||
+                (parsedIp.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork &&
+                 parsedIp.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6))
             {
-                return Result.Failure<IpAddress>(Error.Create("IpAddress.InvalidFormat", "IP address format is invalid. Expected valid IPv4 address."));
+                return Result.Failure<IpAddress>(Error.Create("IpAddress.InvalidFormat", "IP address format is invalid. Expected valid IPv4 or IPv6 address."));
             }
 
             return Result.Success(new IpAddress(ipAddress));

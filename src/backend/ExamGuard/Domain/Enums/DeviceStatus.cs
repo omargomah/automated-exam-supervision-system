@@ -1,6 +1,6 @@
 namespace Domain.Enums
 {
-    public enum CameraStatus
+    public enum DeviceStatus
     {
         Online = 1,
         Offline = 2,
