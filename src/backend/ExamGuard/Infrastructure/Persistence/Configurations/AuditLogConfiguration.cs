@@ -31,6 +31,8 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasIndex(al => al.ApplicationUserId);
 
+            builder.HasIndex(al => new { al.ApplicationUserId, al.CreatedAt });
+
             builder.HasIndex(al => new { al.EntityName, al.EntityId });
 
             builder.HasIndex(al => al.CreatedAt);

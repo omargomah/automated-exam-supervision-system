@@ -9,12 +9,11 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<AlertEvent> builder)
         {
+            builder.UseTpcMappingStrategy();
+
             builder.HasKey(ae => ae.Id);
 
-            builder.Property(ae => ae.CameraDeviceId)
-                .IsRequired();
-
-            builder.Property(ae => ae.StudentId)
+            builder.Property(ae => ae.DeviceId)
                 .IsRequired();
 
             builder.Property(ae => ae.ExamSessionId)
@@ -39,34 +38,21 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(ae => ae.ReviewerNote)
                 .HasMaxLength(Constants.AlertEvent.ReviewerNoteMaxLength);
 
-            builder.Property(ae => ae.AlertType)
-                .IsRequired()
-                .HasConversion<string>()
-                .HasMaxLength(Constants.AlertEvent.AlertTypeMaxLength);
-
             builder.Ignore(ae => ae.ConfidenceScoreVo);
 
             builder.HasIndex(ae => ae.ExamSessionId);
 
-            builder.HasIndex(ae => ae.StudentId);
+            builder.HasIndex(ae => new { ae.ExamSessionId, ae.CreatedAt });
 
-            builder.HasIndex(ae => ae.CameraDeviceId);
+            builder.HasIndex(ae => new { ae.ExamSessionId, ae.Status });
+
+            builder.HasIndex(ae => ae.DeviceId);
 
             builder.HasIndex(ae => ae.ReviewedById);
 
             builder.HasIndex(ae => ae.Status);
 
             builder.HasIndex(ae => ae.CreatedAt);
-
-            builder.HasOne(ae => ae.CameraDevice)
-                .WithMany(cd => cd.AlertEvents)
-                .HasForeignKey(ae => ae.CameraDeviceId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(ae => ae.Student)
-                .WithMany(s => s.AlertEvents)
-                .HasForeignKey(ae => ae.StudentId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(ae => ae.ExamSession)
                 .WithMany(es => es.AlertEvents)
@@ -77,11 +63,6 @@ namespace Infrastructure.Persistence.Configurations
                 .WithMany(u => u.ReviewedAlertEvents)
                 .HasForeignKey(ae => ae.ReviewedById)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(ae => ae.Evidences)
-                .WithOne(e => e.AlertEvent)
-                .HasForeignKey(e => e.AlertEventId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -25,9 +25,9 @@ namespace Domain.ValueObjects
 
             macAddress = macAddress.Trim().ToUpperInvariant();
 
-            if (macAddress.Length > Constants.CameraDevice.MacAddressMaxLength)
+            if (macAddress.Length > Constants.TelemetryNode.MacAddressMaxLength)
             {
-                return Result.Failure<MacAddress>(Error.Create("MacAddress.TooLong", $"MAC address cannot exceed {Constants.CameraDevice.MacAddressMaxLength} characters."));
+                return Result.Failure<MacAddress>(Error.Create("MacAddress.TooLong", $"MAC address cannot exceed {Constants.TelemetryNode.MacAddressMaxLength} characters."));
             }
 
             if (!MacRegex.IsMatch(macAddress))

@@ -7,11 +7,11 @@ namespace Domain.Entities
     public class Student : Entity, IAggregateRoot
     {
         private readonly List<ExamSeatAssignment> _examSeatAssignments = new();
-        private readonly List<AlertEvent> _alertEvents = new();
+        private readonly List<CameraAlert> _cameraAlerts = new();
 
         private Student() : base(Guid.NewGuid()) { }
 
-        private Student(Guid id, string fName, string lName, ProfileImage imageUrl) : base(id)
+        private Student(Guid id, string fName, string lName, MediaFile imageUrl) : base(id)
         {
             FName = fName;
             LName = lName;
@@ -20,14 +20,14 @@ namespace Domain.Entities
 
         public string FName { get; private set; } = string.Empty;
         public string LName { get; private set; } = string.Empty;
-        public ProfileImage ImageUrl { get; private set; } = null!;
+        public MediaFile ImageUrl { get; private set; } = null!;
 
         public string FullName => $"{FName} {LName}".Trim();
 
         public IReadOnlyCollection<ExamSeatAssignment> ExamSeatAssignments => _examSeatAssignments.AsReadOnly();
-        public IReadOnlyCollection<AlertEvent> AlertEvents => _alertEvents.AsReadOnly();
+        public IReadOnlyCollection<CameraAlert> CameraAlerts => _cameraAlerts.AsReadOnly();
 
-        public static Result<Student> Create(string fName, string lName, ProfileImage imageUrl, Guid? id = null)
+        public static Result<Student> Create(string fName, string lName, MediaFile imageUrl, Guid? id = null)
         {
             if (string.IsNullOrWhiteSpace(fName))
             {
@@ -67,7 +67,7 @@ namespace Domain.Entities
 
         public static Result<Student> Create(string fName, string lName, string imageUrl, string imagePublicId, Guid? id = null)
         {
-            var imageResult = ProfileImage.Create(imageUrl, imagePublicId);
+            var imageResult = MediaFile.Create(imageUrl, imagePublicId);
            
             if (imageResult.IsFail)
                 return Result.Failure<Student>(imageResult.Error!);
@@ -75,7 +75,7 @@ namespace Domain.Entities
             return Create(fName, lName, imageResult.Value!, id);
         }
 
-        public Result UpdateProfile(string fName, string lName, ProfileImage imageUrl)
+        public Result UpdateProfile(string fName, string lName, MediaFile imageUrl)
         {
             if (string.IsNullOrWhiteSpace(fName))
             {
@@ -119,7 +119,7 @@ namespace Domain.Entities
 
         public Result UpdateProfile(string fName, string lName, string imageUrl, string imagePublicId)
         {
-            var imageResult = ProfileImage.Create(imageUrl, imagePublicId);
+            var imageResult = MediaFile.Create(imageUrl, imagePublicId);
             if (imageResult.IsFail)
             {
                 return Result.Failure(imageResult.Error!);

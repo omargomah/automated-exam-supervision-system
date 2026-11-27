@@ -37,11 +37,6 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(es => es.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(u => u.ReviewedAlertEvents)
-                .WithOne(ae => ae.ReviewedBy)
-                .HasForeignKey(ae => ae.ReviewedById)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasMany(u => u.AuditLogs)
                 .WithOne(al => al.ApplicationUser)
                 .HasForeignKey(al => al.ApplicationUserId)

@@ -26,9 +26,9 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(s => s.ClassroomId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(c => c.CameraDevices)
-                .WithOne(cd => cd.Classroom)
-                .HasForeignKey(cd => cd.ClassroomId)
+            builder.HasMany(c => c.Devices)
+                .WithOne(d => d.Classroom)
+                .HasForeignKey(d => d.ClassroomId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(c => c.ExamSessions)

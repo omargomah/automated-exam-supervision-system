@@ -28,20 +28,15 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AlertType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("CameraDeviceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("ConfidenceScore")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ExamSessionId")
                         .HasColumnType("uniqueidentifier");
@@ -61,14 +56,11 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CameraDeviceId");
-
                     b.HasIndex("CreatedAt");
+
+                    b.HasIndex("DeviceId");
 
                     b.HasIndex("ExamSessionId");
 
@@ -76,9 +68,13 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Status");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("ExamSessionId", "CreatedAt");
 
-                    b.ToTable("AlertEvents");
+                    b.HasIndex("ExamSessionId", "Status");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Entities.ApplicationUser", b =>
@@ -150,45 +146,11 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("ApplicationUserId", "CreatedAt");
+
                     b.HasIndex("EntityName", "EntityId");
 
                     b.ToTable("AuditLogs");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CameraDevice", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClassroomId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CurrentIpAddress")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<DateTime?>("LastSeenAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MacAddress")
-                        .IsRequired()
-                        .HasMaxLength(17)
-                        .HasColumnType("nvarchar(17)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassroomId");
-
-                    b.HasIndex("MacAddress")
-                        .IsUnique();
-
-                    b.ToTable("CameraDevices");
                 });
 
             modelBuilder.Entity("Domain.Entities.Classroom", b =>
@@ -213,30 +175,46 @@ namespace Infrastructure.Migrations
                     b.ToTable("Classrooms");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Evidence", b =>
+            modelBuilder.Entity("Domain.Entities.Device", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AlertEventId")
+                    b.Property<string>("ApiKeyHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("ClassroomId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("FrameType")
+                    b.Property<string>("CurrentIpAddress")
+                        .HasMaxLength(45)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(45)");
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("MediaPath")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlertEventId");
+                    b.HasIndex("ApiKeyHash")
+                        .IsUnique();
 
-                    b.ToTable("Evidences");
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("Status", "LastSeenAt");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Entities.ExamSeatAssignment", b =>
@@ -305,7 +283,11 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Status");
 
+                    b.HasIndex("ClassroomId", "StartTime");
+
                     b.HasIndex("StartTime", "EndTime");
+
+                    b.HasIndex("Status", "StartTime");
 
                     b.ToTable("ExamSessions");
                 });
@@ -613,14 +595,101 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.CameraAlert", b =>
+                {
+                    b.HasBaseType("Domain.Entities.AlertEvent");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("VideoAlertType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("CameraAlerts", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.TelemetryAlert", b =>
+                {
+                    b.HasBaseType("Domain.Entities.AlertEvent");
+
+                    b.Property<int?>("BleDeviceCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RfLevel")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<decimal>("SoundLevel")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<int?>("SuspiciousApCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TelemetryAlertType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.ToTable("TelemetryAlerts", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Camera", b =>
+                {
+                    b.HasBaseType("Domain.Entities.Device");
+
+                    b.Property<DateTime?>("CalibratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("GridColumns")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GridRows")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("GridStartSeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HostName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StreamUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasIndex("GridStartSeatId");
+
+                    b.ToTable("Cameras", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.TelemetryNode", b =>
+                {
+                    b.HasBaseType("Domain.Entities.Device");
+
+                    b.Property<string>("FirmwareVersion")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("MacAddress")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(17)");
+
+                    b.HasIndex("MacAddress")
+                        .IsUnique()
+                        .HasFilter("[MacAddress] IS NOT NULL");
+
+                    b.ToTable("TelemetryNodes", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.AlertEvent", b =>
                 {
-                    b.HasOne("Domain.Entities.CameraDevice", "CameraDevice")
-                        .WithMany("AlertEvents")
-                        .HasForeignKey("CameraDeviceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.ExamSession", "ExamSession")
                         .WithMany("AlertEvents")
                         .HasForeignKey("ExamSessionId")
@@ -632,19 +701,9 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("ReviewedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Student", "Student")
-                        .WithMany("AlertEvents")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CameraDevice");
-
                     b.Navigation("ExamSession");
 
                     b.Navigation("ReviewedBy");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Domain.Entities.ApplicationUser", b =>
@@ -667,26 +726,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CameraDevice", b =>
+            modelBuilder.Entity("Domain.Entities.Device", b =>
                 {
                     b.HasOne("Domain.Entities.Classroom", "Classroom")
-                        .WithMany("CameraDevices")
+                        .WithMany("Devices")
                         .HasForeignKey("ClassroomId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Classroom");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Evidence", b =>
-                {
-                    b.HasOne("Domain.Entities.AlertEvent", "AlertEvent")
-                        .WithMany("Evidences")
-                        .HasForeignKey("AlertEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AlertEvent");
                 });
 
             modelBuilder.Entity("Domain.Entities.ExamSeatAssignment", b =>
@@ -757,7 +805,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Student", b =>
                 {
-                    b.OwnsOne("Domain.ValueObjects.ProfileImage", "ImageUrl", b1 =>
+                    b.OwnsOne("Domain.ValueObjects.MediaFile", "ImageUrl", b1 =>
                         {
                             b1.Property<Guid>("StudentId")
                                 .HasColumnType("uniqueidentifier");
@@ -837,9 +885,53 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.AlertEvent", b =>
+            modelBuilder.Entity("Domain.Entities.CameraAlert", b =>
                 {
-                    b.Navigation("Evidences");
+                    b.HasOne("Domain.Entities.Student", "Student")
+                        .WithMany("CameraAlerts")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.MediaFile", "Media", b1 =>
+                        {
+                            b1.Property<Guid>("CameraAlertId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasMaxLength(250)
+                                .HasColumnType("nvarchar(250)")
+                                .HasColumnName("PublicId");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(2000)
+                                .HasColumnType("nvarchar(2000)")
+                                .HasColumnName("Url");
+
+                            b1.HasKey("CameraAlertId");
+
+                            b1.ToTable("CameraAlerts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CameraAlertId");
+                        });
+
+                    b.Navigation("Media")
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Camera", b =>
+                {
+                    b.HasOne("Domain.Entities.Seat", "GridStartSeat")
+                        .WithMany()
+                        .HasForeignKey("GridStartSeatId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GridStartSeat");
                 });
 
             modelBuilder.Entity("Domain.Entities.ApplicationUser", b =>
@@ -851,14 +943,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("ReviewedAlertEvents");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CameraDevice", b =>
-                {
-                    b.Navigation("AlertEvents");
-                });
-
             modelBuilder.Entity("Domain.Entities.Classroom", b =>
                 {
-                    b.Navigation("CameraDevices");
+                    b.Navigation("Devices");
 
                     b.Navigation("ExamSessions");
 
@@ -881,7 +968,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Student", b =>
                 {
-                    b.Navigation("AlertEvents");
+                    b.Navigation("CameraAlerts");
 
                     b.Navigation("ExamSeatAssignments");
                 });

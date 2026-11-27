@@ -34,9 +34,13 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasIndex(es => es.ClassroomId);
 
+            builder.HasIndex(es => new { es.ClassroomId, es.StartTime });
+
             builder.HasIndex(es => es.CreatedById);
 
             builder.HasIndex(es => es.Status);
+
+            builder.HasIndex(es => new { es.Status, es.StartTime });
 
             builder.HasIndex(es => new { es.StartTime, es.EndTime });
 
@@ -55,10 +59,7 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(esa => esa.ExamSessionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(es => es.AlertEvents)
-                .WithOne(ae => ae.ExamSession)
-                .HasForeignKey(ae => ae.ExamSessionId)
-                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

@@ -25,6 +25,8 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasIndex(esa => new { esa.ExamSessionId, esa.SeatId })
                 .IsUnique();
 
+            builder.HasIndex(esa => esa.StudentId);
+
             builder.HasOne(esa => esa.ExamSession)
                 .WithMany(es => es.ExamSeatAssignments)
                 .HasForeignKey(esa => esa.ExamSessionId)

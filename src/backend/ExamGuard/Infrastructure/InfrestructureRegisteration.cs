@@ -96,12 +96,15 @@ namespace Infrastructure
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IClassroomRepository, ClassroomRepository>();
             services.AddScoped<ISeatRepository, SeatRepository>();
-            services.AddScoped<ICameraDeviceRepository, CameraDeviceRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<ICameraRepository, CameraRepository>();
+            services.AddScoped<ITelemetryNodeRepository, TelemetryNodeRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IExamSessionRepository, ExamSessionRepository>();
             services.AddScoped<IExamSeatAssignmentRepository, ExamSeatAssignmentRepository>();
             services.AddScoped<IAlertEventRepository, AlertEventRepository>();
-            services.AddScoped<IEvidenceRepository, EvidenceRepository>();
+            services.AddScoped<ICameraAlertRepository, CameraAlertRepository>();
+            services.AddScoped<ITelemetryAlertRepository, TelemetryAlertRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
             #endregion

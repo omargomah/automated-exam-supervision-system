@@ -19,11 +19,23 @@ namespace Domain.Shared
             public const int MinSeatNumber = 1;
         }
 
-        public static class CameraDevice
+        public static class Device
+        {
+            public const int IpAddressMaxLength = 45;
+            public const int StatusMaxLength = 50;
+            public const int ApiKeyHashMaxLength = 64;
+        }
+
+        public static class Camera
+        {
+            public const int HostNameMaxLength = 100;
+            public const int StreamUrlMaxLength = 500;
+        }
+
+        public static class TelemetryNode
         {
             public const int MacAddressMaxLength = 17;
-            public const int IpAddressMaxLength = 15;
-            public const int StatusMaxLength = 50;
+            public const int FirmwareVersionMaxLength = 5;
         }
 
         public static class Student
@@ -43,7 +55,6 @@ namespace Domain.Shared
         public static class AlertEvent
         {
             public const int StatusMaxLength = 50;
-            public const int AlertTypeMaxLength = 50;
             public const int ReviewerNoteMaxLength = 500;
             public const decimal MinConfidenceScore = 0.0m;
             public const decimal MaxConfidenceScore = 100.0m;
@@ -51,12 +62,24 @@ namespace Domain.Shared
             public const int ConfidenceScoreScale = 2;
         }
 
-        public static class Evidence
+        public static class CameraAlert
         {
-            public const int FrameTypeMaxLength = 50;
-            public const int MediaUrlMaxLength = 2000;
-            public const int MediaPublicIdMaxLength = 250;
-            public const int MaxVideoDurationSeconds = 5;
+            public const int VideoAlertTypeMaxLength = 50;
+        }
+
+        public static class TelemetryAlert
+        {
+            public const int TelemetryAlertTypeMaxLength = 50;
+            public const int RfLevelPrecision = 5;
+            public const int RfLevelScale = 4;
+            public const int SoundLevelPrecision = 5;
+            public const int SoundLevelScale = 4;
+        }
+
+        public static class MediaFile
+        {
+            public const int UrlMaxLength = 2000;
+            public const int PublicIdMaxLength = 250;
         }
 
         public static class ApplicationUser

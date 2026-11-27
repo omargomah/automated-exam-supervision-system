@@ -1,4 +1,4 @@
-﻿using Application.IServices;
+using Application.IServices;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Domain.Shared;
@@ -27,11 +27,11 @@ namespace Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<Result<ProfileImage>> UploadImageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        public async Task<Result<MediaFile>> UploadImageAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             // Validate the file is not null and has content
             if (file == null || file.Length == 0)
-                return Result.Failure<ProfileImage>(Domain.Shared.Error.Create("Invalid file", "File cannot be null or empty"));
+                return Result.Failure<MediaFile>(Domain.Shared.Error.Create("Invalid file", "File cannot be null or empty"));
             
             // start to upload the image to Cloudinary
             await using var stream = file.OpenReadStream();
@@ -49,20 +49,20 @@ namespace Infrastructure.Services
 
             // Check for errors in the upload result             
             if (uploadResult.Error != null)
-                return Result.Failure<ProfileImage>(Domain.Shared.Error.Create("CloudinaryUploadFailed", $"Cloudinary upload failed: {uploadResult.Error.Message}"));
+                return Result.Failure<MediaFile>(Domain.Shared.Error.Create("CloudinaryUploadFailed", $"Cloudinary upload failed: {uploadResult.Error.Message}"));
 
-            // Create a ProfileImage value object from the upload result
-            var createProfileImageResult = ProfileImage.Create(uploadResult.SecureUrl.ToString(), uploadResult.PublicId)!;
+            // Create a MediaFile value object from the upload result
+            var createMediaFileResult = MediaFile.Create(uploadResult.SecureUrl.ToString(), uploadResult.PublicId)!;
             
-            // If creating the ProfileImage fails, delete the uploaded image from Cloudinary
-            if (createProfileImageResult.IsFail)
+            // If creating the MediaFile fails, delete the uploaded image from Cloudinary
+            if (createMediaFileResult.IsFail)
             {
-                _logger.LogError("Failed to create profile image after uploading to Cloudinary. Deleting uploaded image {PublicId}", uploadResult.PublicId);
+                _logger.LogError("Failed to create media file after uploading to Cloudinary. Deleting uploaded image {PublicId}", uploadResult.PublicId);
                 bool isDeleteSuccess = await DeleteImageAsync(uploadResult.PublicId, cancellationToken);
                 if (!isDeleteSuccess)
-                    _logger.LogWarning("Failed to delete uploaded image {PublicId} after failed to create profile image", uploadResult.PublicId);
+                    _logger.LogWarning("Failed to delete uploaded image {PublicId} after failed to create media file", uploadResult.PublicId);
             }
-            return createProfileImageResult;
+            return createMediaFileResult;
         }
 
         public async Task<Result<MediaFile>> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default)

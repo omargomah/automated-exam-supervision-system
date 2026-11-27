@@ -6,7 +6,7 @@ namespace Domain.Entities
     public class Classroom : Entity, IAggregateRoot
     {
         private readonly List<Seat> _seats = new();
-        private readonly List<CameraDevice> _cameraDevices = new();
+        private readonly List<Device> _devices = new();
         private readonly List<ExamSession> _examSessions = new();
 
         private Classroom() : base(Guid.NewGuid()) { }
@@ -21,7 +21,7 @@ namespace Domain.Entities
         public int Capacity { get; private set; }
 
         public IReadOnlyCollection<Seat> Seats => _seats.AsReadOnly();
-        public IReadOnlyCollection<CameraDevice> CameraDevices => _cameraDevices.AsReadOnly();
+        public IReadOnlyCollection<Device> Devices => _devices.AsReadOnly();
         public IReadOnlyCollection<ExamSession> ExamSessions => _examSessions.AsReadOnly();
 
         public static Result<Classroom> Create(string name, int capacity, Guid? id = null)
