@@ -1,7 +1,7 @@
 import 'package:cheating_tracker/feature/proctor/alerts/presentation/screens/proctor_alerts_screen.dart';
 import 'package:cheating_tracker/feature/proctor/dashboard/presentation/screens/proctor_dashboard_screen.dart';
 import 'package:cheating_tracker/feature/proctor/profile/presentation/screens/proctor_profile_screen.dart';
-import 'package:cheating_tracker/feature/proctor/rooms/presentation/screens/proctor_rooms_screen.dart';
+import 'package:cheating_tracker/feature/proctor/exams/presentation/screens/proctor_exams_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProctorAppSection extends StatefulWidget {
@@ -15,10 +15,10 @@ class _ProctorAppSectionState extends State<ProctorAppSection> {
   final List<Widget> _screens = const [
     ProctorDashboardScreen(),
     ProctorAlertsScreen(),
-    ProctorRoomsScreen(),
+    ProctorExamsScreen(),
     ProctorProfileScreen(),
   ];
-  final List<String> _titles = ['Dashboard', 'Alerts', 'Rooms', 'Profile'];
+  final List<String> _titles = ['Dashboard', 'Alerts', 'Exams', 'Profile'];
   int _currIdx = 0;
 
   @override
@@ -45,7 +45,7 @@ class _ProctorAppSectionState extends State<ProctorAppSection> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.meeting_room_outlined),
-            label: "Rooms",
+            label: "Exams",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outlined),

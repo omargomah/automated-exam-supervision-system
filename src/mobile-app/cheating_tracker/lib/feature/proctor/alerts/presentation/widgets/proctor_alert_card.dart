@@ -1,7 +1,7 @@
 import 'package:cheating_tracker/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class ProctorAlertWidget extends StatelessWidget {
+class ProctorAlertCard extends StatelessWidget {
   const new({
     super.key,
     required this.name,
